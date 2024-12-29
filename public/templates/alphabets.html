@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/alphabets.css') }}">
+</head>
+<body>
+    <header>
+        <div class="thinkytots">
+            <img src="{{ url_for('static', filename='images/thinkytots.jpg') }}" alt="thinkytots-image" class="thinkytots-logo">
+        </div>
+        <i class="fa-solid fas fa-bars" id="menu-button" onclick="menuButtonClicked()"></i>
+
+        <div class="user">
+            <a href="{{ url_for('public.profile') }}">
+                <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="user-image" class="user-profile">
+            </a>
+            <span id="username">{{ current_user.username }}</span>
+        </div>
+    </header>
+    <div class="sidebar">
+        <ul>
+            <li>
+                <a href="{{ url_for('public.home') }}"><i class="fa-solid fas fa-home"></i>
+                <span class="nav-text">Dashboard</span></a>
+                <span class="tooltip">Dashboard</span>
+            </li>
+            <li>
+                <a href="{{ url_for('public.settings') }}"><i class="fa-solid fas fa-cogs"></i>
+                <span class="nav-text">Settings</span></a>
+                <span class="tooltip">Settings</span>
+            </li>
+            <li>
+                <a href="{{ url_for('public.logout') }}"><i class="fa-solid fas fa-sign-out-alt"></i>
+                <span class="nav-text">Logout</span></a>
+                <span class="tooltip">Logout</span>
+            </li>
+        </ul>
+    </div>
+    <section class="main-container">
+        <div class="content">
+            <h1>Learn Alphabets</h1>
+            <div class="display-container">
+                <div class="display-content1">
+                    <div class="box-display">A</div>
+                    <p>Uppercase</p>    
+                </div>
+                <div class="display-content2">
+                    <div class="box-display">a</div>
+                    <p>Lowercase</p>             
+                </div>
+            </div>
+            <div class="alphabets" id="alphabets-display">
+                <div class="box"><span class="uppercase">A</span> <span class="lowercase">a</span></div>
+                <div class="box"><span class="uppercase">B</span> <span class="lowercase">b</span></div>
+                <div class="box"><span class="uppercase">C</span> <span class="lowercase">c</span></div>
+                <div class="box"><span class="uppercase">D</span> <span class="lowercase">d</span></div>
+                <div class="box"><span class="uppercase">E</span> <span class="lowercase">e</span></div>
+                <div class="box"><span class="uppercase">F</span> <span class="lowercase">f</span></div>
+                <div class="box"><span class="uppercase">G</span> <span class="lowercase">g</span></div>
+                <div class="box"><span class="uppercase">H</span> <span class="lowercase">h</span></div>
+                <div class="box"><span class="uppercase">I</span> <span class="lowercase">i</span></div>
+                <div class="box"><span class="uppercase">J</span> <span class="lowercase">j</span></div>
+                <div class="box"><span class="uppercase">K</span> <span class="lowercase">k</span></div>
+                <div class="box"><span class="uppercase">L</span> <span class="lowercase">l</span></div>
+                <div class="box"><span class="uppercase">M</span> <span class="lowercase">m</span></div>
+                <div class="box"><span class="uppercase">N</span> <span class="lowercase">n</span></div>
+                <div class="box"><span class="uppercase">O</span> <span class="lowercase">o</span></div>
+                <div class="box"><span class="uppercase">P</span> <span class="lowercase">p</span></div>
+                <div class="box"><span class="uppercase">Q</span> <span class="lowercase">q</span></div>
+                <div class="box"><span class="uppercase">R</span> <span class="lowercase">r</span></div>
+                <div class="box"><span class="uppercase">S</span> <span class="lowercase">s</span></div>
+                <div class="box"><span class="uppercase">T</span> <span class="lowercase">t</span></div>
+                <div class="box"><span class="uppercase">U</span> <span class="lowercase">u</span></div>
+                <div class="box"><span class="uppercase">V</span> <span class="lowercase">v</span></div>
+                <div class="box"><span class="uppercase">W</span> <span class="lowercase">w</span></div>
+                <div class="box"><span class="uppercase">X</span> <span class="lowercase">x</span></div>
+                <div class="box"><span class="uppercase">Y</span> <span class="lowercase">y</span></div>
+                <div class="box"><span class="uppercase">Z</span> <span class="lowercase">z</span></div>
+            </div>
+            <div class="alphabet-redirect">
+                <a href="{{ url_for('public.alphas') }}">
+                    <p>Play Puzzle</p>
+                </a>
+            </div>
+        </div>
+    </section>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/alphabets.js') }}"></script>
+</body>
+</html>

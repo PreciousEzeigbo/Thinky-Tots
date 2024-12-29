@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/alphas.css') }}">
+</head>
+<body>
+    <header>
+        <div class="thinkytots">
+            <img src="{{ url_for('static', filename='images/thinkytots.jpg') }}" alt="thinkytots-image" class="thinkytots-logo">
+        </div>
+        <i class="fa-solid fas fa-bars" id="menu-button" onclick="menuButtonClicked()"></i>
+
+        <div class="user">
+            <a href="{{ url_for('public.profile') }}">
+                <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="user-image" class="user-profile">
+            </a>
+            <span id="username">{{ current_user.username }}</span>
+        </div>
+    </header>
+    <div class="sidebar">
+        <ul>
+            <li>
+                <a href="{{ url_for('public.home') }}"><i class="fa-solid fas fa-home"></i>
+                <span class="nav-text">Dashboard</span></a>
+                <span class="tooltip">Dashboard</span>
+            </li>
+            <li>
+                <a href="{{ url_for('public.settings') }}"><i class="fa-solid fas fa-cogs"></i>
+                <span class="nav-text">Settings</span></a>
+                <span class="tooltip">Settings</span>
+            </li>
+            <li>
+                <a href="{{ url_for('public.logout') }}"><i class="fa-solid fas fa-sign-out-alt"></i>
+                <span class="nav-text">Logout</span></a>
+                <span class="tooltip">Logout</span>
+            </li>
+        </ul>
+    </div>
+    <section class="main-container">
+        <div class="content">
+            <h1 id="puzzle-1">Pairing Uppercase Letters with Lowercase Letters</h1>
+            <div class="alphabets" id="uppercase-alphabets">
+                <div class="box" id="A" class="uppercase">{{ uppercase_alphabet[0] }}</div>
+                <div class="box" id="B" class="uppercase">{{ uppercase_alphabet[1] }}</div>
+                <div class="box" id="C" class="uppercase">{{ uppercase_alphabet[2] }}</div>
+                <div class="box" id="D" class="uppercase">{{ uppercase_alphabet[3] }}</div>
+                <div class="box" id="E" class="uppercase">{{ uppercase_alphabet[4] }}</div>
+                <div class="box" id="F" class="uppercase">{{ uppercase_alphabet[5] }}</div>
+                <div class="box" id="G" class="uppercase">{{ uppercase_alphabet[6] }}</div>
+                <div class="box" id="H" class="uppercase">{{ uppercase_alphabet[7] }}</div>
+            </div>
+            <p id="time">TIMER</p>
+            <div class="alphabets" id="lowercase-alphabets">
+                <div class="box" id="a" class="lowercase">{{ lowercase_alphabet[0] }}</div>
+                <div class="box" id="b" class="lowercase">{{ lowercase_alphabet[1] }}</div>
+                <div class="box" id="c" class="lowercase">{{ lowercase_alphabet[2] }}</div>
+                <div class="box" id="d" class="lowercase">{{ lowercase_alphabet[3] }}</div>
+                <div class="box" id="e" class="lowercase">{{ lowercase_alphabet[4] }}</div>
+                <div class="box" id="f" class="lowercase">{{ lowercase_alphabet[5] }}</div>
+                <div class="box" id="g" class="lowercase">{{ lowercase_alphabet[6] }}</div>
+                <div class="box" id="h" class="lowercase">{{ lowercase_alphabet[7] }}</div>
+            </div> 
+
+            <h2 id="puzzle-2" style="display: none;">Arrange Alphabets in Alphabetical Order</h2>
+            <div class="alphabets" id="alphabets-order" style="display: none;">
+                <div class="box" id="box-1"></div>
+                <div class="box" id="box-2"></div>
+                <div class="box" id="box-3"></div>
+                <div class="box" id="box-4"></div>
+                <div class="box" id="box-5"></div>
+                <div class="box" id="box-6"></div>
+                <div class="box" id="box-7"></div>
+                <div class="box" id="box-8"></div>
+            </div>
+
+            <div class="alphabets" id="alphabets-displayed" style="display: none;">
+                <div class="box">{{ alphabet_displayed[0] }}</div>
+                <div class="box">{{ alphabet_displayed[1] }}</div>
+                <div class="box">{{ alphabet_displayed[2] }}</div>
+                <div class="box">{{ alphabet_displayed[3] }}</div>
+                <div class="box">{{ alphabet_displayed[4] }}</div>
+                <div class="box">{{ alphabet_displayed[5] }}</div>
+                <div class="box">{{ alphabet_displayed[6] }}</div>
+                <div class="box">{{ alphabet_displayed[7] }}</div>
+            </div>
+
+            <h3 id="puzzle-3" style="display: none;">Unscramble the Alphabets in Alphabetical Order</h3>
+            <div class="alphabets" id="alphas-order" style="display: none;">
+                <div class="item" id="item-1"></div>
+                <div class="item" id="item-2"></div>
+                <div class="item" id="item-3"></div>
+                <div class="item" id="item-4"></div>
+                <div class="item" id="item-5"></div>
+                <div class="item" id="item-6"></div>
+                <div class="item" id="item-7"></div>
+                <div class="item" id="item-8"></div>
+                <div class="item" id="item-9"></div>
+                <div class="item" id="item-10"></div>
+                <div class="item" id="item-11"></div>
+                <div class="item" id="item-12"></div>
+                <div class="item" id="item-13"></div>
+                <div class="item" id="item-14"></div>
+                <div class="item" id="item-15"></div>
+                <div class="item" id="item-16"></div>
+                <div class="item" id="item-17"></div>
+                <div class="item" id="item-18"></div>
+                <div class="item" id="item-19"></div>
+                <div class="item" id="item-20"></div>
+                <div class="item" id="item-21"></div>
+                <div class="item" id="item-22"></div>
+                <div class="item" id="item-23"></div>
+                <div class="item" id="item-24"></div>
+                <div class="item" id="item-25"></div>
+                <div class="item" id="item-26"></div>
+            </div>
+
+            <div class="alphabets" id="alphas-displayed"style="display: none;">
+                <div class="item">{{ alpha_displayed[0] }}</div>
+                <div class="item">{{ alpha_displayed[1] }}</div>
+                <div class="item">{{ alpha_displayed[2] }}</div>
+                <div class="item">{{ alpha_displayed[3] }}</div>
+                <div class="item">{{ alpha_displayed[4] }}</div>
+                <div class="item">{{ alpha_displayed[5] }}</div>
+                <div class="item">{{ alpha_displayed[6] }}</div>
+                <div class="item">{{ alpha_displayed[7] }}</div>
+                <div class="item">{{ alpha_displayed[8] }}</div>
+                <div class="item">{{ alpha_displayed[9] }}</div>
+                <div class="item">{{ alpha_displayed[10] }}</div>
+                <div class="item">{{ alpha_displayed[11] }}</div>
+                <div class="item">{{ alpha_displayed[12] }}</div>
+                <div class="item">{{ alpha_displayed[13] }}</div>
+                <div class="item">{{ alpha_displayed[14] }}</div>
+                <div class="item">{{ alpha_displayed[15] }}</div>
+                <div class="item">{{ alpha_displayed[16] }}</div>
+                <div class="item">{{ alpha_displayed[17] }}</div>
+                <div class="item">{{ alpha_displayed[18] }}</div>
+                <div class="item">{{ alpha_displayed[19] }}</div>
+                <div class="item">{{ alpha_displayed[20] }}</div>
+                <div class="item">{{ alpha_displayed[21] }}</div>
+                <div class="item">{{ alpha_displayed[22] }}</div>
+                <div class="item">{{ alpha_displayed[23] }}</div>
+                <div class="item">{{ alpha_displayed[24] }}</div>
+                <div class="item">{{ alpha_displayed[25] }}</div>
+            </div>
+        </div>
+    </section>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/alphas.js') }}"></script>
+</body>
+</html>
