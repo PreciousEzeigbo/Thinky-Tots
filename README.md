@@ -105,11 +105,12 @@ Developed by Christian Chibuike and Precious Ezeigbo, tech enthusiasts who are t
 - **LinkedIn**: Precious Ezeigbo
 - **X**: preciousezeigbo
 
+
 - **GitHub**: Awesome6192
 - **LinkedIn**: www.linkedin.com/in/christian-chibuike-14a912102
 - **X**: c_chibuzor_c
 
-Feel free to reach out if you have questions, suggestions, or just want to chat about fitness (or lack thereof)!
+Feel free to reach out if you have questions, suggestions, or just want to chat about collaboartions.
 
 
 ## css
