@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body>
+    <header>
+        <div class="thinkytots">
+            <img src="{{ url_for('static', filename='images/thinkytots.jpg') }}" alt="thinkytots-image" class="thinkytots-logo">
+        </div>
+        <i class="fa-solid fas fa-bars" id="menu-button" onclick="menuButtonClicked()"></i>
+
+        <div class="user">
+            <a href="{{ url_for('public.profile') }}">
+                <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="user-image" class="user-profile">
+            </a>
+            <span id="username">{{ current_user.username }}</span>
+        </div>
+    </header>
+    <div class="sidebar">
+        <ul>
+            <li>
+                <a href="{{ url_for('public.home') }}"><i class="fa-solid fas fa-home"></i>
+                <span class="nav-text">Dashboard</span></a>
+                <span class="tooltip">Dashboard</span>
+            </li>
+            <li>
+                <a href="{{ url_for('public.settings') }}"><i class="fa-solid fas fa-cogs"></i>
+                <span class="nav-text">Settings</span></a>
+                <span class="tooltip">Settings</span>
+            </li>
+            <li>
+                <a href="{{ url_for('public.logout') }}"><i class="fa-solid fas fa-sign-out-alt"></i>
+                <span class="nav-text">Logout</span></a>
+                <span class="tooltip">Logout</span>
+            </li>
+        </ul>
+    </div>
+    
+    <section class="profile-container">
+        <div class="profile">
+            <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="profile image" class="profile-image">
+            <h1 id="username">{{ current_user.username }}</h1>
+            <p>Welcome to your profile!</p>
+        </div>
+        <div class="profile-info">
+            <form id="form" method="POST" action="{{ url_for('public.profile') }}">
+                <div>
+                    <label>Full Name:</label>
+                    <input type="text" id="fullName" name="fullName" value="{{ current_user.full_name or '' }}" required>
+                </div>
+                <p id="email">Email: {{ current_user.email }}</p>
+                <div>
+                    <label>Birthday:</label>
+                    <input type="date" id="birthday" name="birthday" value="{{ current_user.birthday or '' }}" required>
+                </div>
+
+                <div>
+                    <button type="submit">Update Profile</button>
+                </div>
+            </form>
+        </div>
+    </section>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+</body>
+</html>
