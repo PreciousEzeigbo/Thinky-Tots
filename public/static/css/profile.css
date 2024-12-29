@@ -1,0 +1,45 @@
+.profile-container {
+    margin-left: 300px;
+    margin-top: 100px;
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px #091a3a;
+    max-width: 700px;
+    height: 500px;
+}
+
+.profile {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile .profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 100%;
+    border: 1px solid #091a3a;
+}
+
+.profile h1 {
+    font-size: 20px;
+    color: black;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.profile p {
+    font-size: 17px;
+    color: black;
+}
+
+.profile-info {
+    font-size: 17px;
+    line-height: 40px;
+}
+
+.profile-info p {
+    margin-bottom: 5px;
+}

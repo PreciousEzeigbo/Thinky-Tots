@@ -1,0 +1,206 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: rgb(233, 233, 233);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+header {
+    background-color: white;
+    position: fixed;
+    padding-top: 75px;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    z-index: 1000;
+}
+
+header .thinkytots {
+    position: absolute;
+    top: 6px;
+    left: 20px;
+    background-color: transparent;
+}
+
+header .thinkytots-logo {
+    width: 170px;
+    height: auto;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    max-width: 1200px;
+    width: 100%;
+    margin-top: 100px;
+}
+
+.image-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.image-container img {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px #091a3a;
+}
+
+.container {
+    background-color: #091a3a;
+    border-radius: 15px;
+    width: 400px;
+    max-width: 100%;
+    overflow: hidden;
+    box-shadow: 0 4px 8px #091a3a;
+}
+
+.header {
+    background-color: white;
+    text-align: center;
+    border-bottom: 1px solid;
+    padding: 20px;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+#form {
+    padding: 15px 40px;
+}
+
+.form-control {
+    position: relative;
+    margin-bottom: 10px;
+    padding-bottom: 20px;
+}
+
+.form-control label {
+    margin-bottom: 5px;
+    display: inline-block;
+    color: white;
+    font-weight: bold;
+}
+
+.form-control input {
+    border: 2px solid #f0f0f0;
+    border-radius: 4px;
+    padding: 8px;
+    width: 100%;
+    font-size: 15px;
+    display: block;
+}
+
+.form-control.success input {
+    border-color: rgb(0, 255, 0);
+}
+
+.form-control.error input {
+    border-color: red;
+}
+
+.form-control i {
+    position: absolute;
+    top: 35px;
+    right: 10px;
+    visibility: hidden;
+}
+
+.form-control.success i.fa-check-circle {
+    color: rgb(0, 255, 0);
+    visibility: visible;
+}
+
+.form-control.error i.fa-exclamation-circle {
+    color: red;
+    visibility: visible;
+}
+
+.form-control small {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: red;
+    font-weight: bold;
+    font-family: inherit;
+    visibility: hidden;
+}
+
+.form-control.error small {
+    color: red;
+    visibility: visible;
+}
+
+.btn {
+    background-color: rgb(255, 0, 0);
+    color: white;
+    padding: 10px;
+    font-size: 18px;
+    font-family: inherit;
+    border: 2px;
+    border-radius: 8px;
+    display: block;
+    width: 40%;
+    cursor: pointer;
+    margin: 0 auto; /* This centers the btn */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.btn:hover {
+    background-color: rgb(200, 0, 0); /* Slightly darker red on hover */
+    transform: scale(1.05); /* Slight scale up on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+}
+
+.btn:active {
+    transform: scale(0.95); /* Slight scale down when clicked */
+}
+
+.login {
+    background-color: #091a3a; /* Match the container's background */
+    padding: 15px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px; /* Space between label and link */
+}
+
+.login label {
+    color: white; /* Change to white font */
+    font-family: 'Arial', sans-serif;
+    font-size: 15px;
+    position: relative;
+}
+
+.login a {
+    color: #4a90e2;
+    text-decoration: none;
+    font-family: 'Arial', sans-serif;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.login a:hover {
+    color: #2c72b3;
+    text-decoration: underline;
+}
