@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thinky-Tots</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo-container">
+                <a href="{{ url_for('public.index') }}" class="logo">
+                    <img src="/static/images/thinkytots.jpg" alt="Thinky-Tots Logo" class="logo-image">
+                    <span class="logo-text">Thinky-Tots</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="{{ url_for('public.register') }}" class="cta-button">Join Now</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <div class="hero-content">
+                <h1>Learn, Play, Grow</h1>
+                <p>Join our amazing learning adventure where every lesson is fun and every achievement is celebrated!</p>
+                <a href="{{ url_for('public.register') }}" class="cta-button">Get Started</a>
+            </div>
+        </section>
+
+        <section id="features">
+            <h2>Amazing learning adventures</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>Quiz</h3>
+                    <p>Choose your preffered quiz and solve them while learning.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Progress</h3>
+                    <p>Review your progress over time.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Leaderboard</h3>
+                    <p>Share your achievements, and get inspired.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <h2>About Thinky-Tots</h2>
+            <p>THINKY TOTS was created to be an interactive educational web site designed to make learning fun and engaging for young children. Through playful puzzles, kids can explore the foundations of language and math while fostering creativity, critical thinking, and problem-solving skills. Our mission is to provide a safe, enjoyable, and enriching environment where children can learn, play, and grow.
+
+                Whether it's solving math puzzles, reading magical stories, or conducting simple science experiments, every learning moment is designed to spark curiosity and joy.</p>
+            
+            <h3>Meet the Team</h3>
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="/api/placeholder/200/200" alt=" ">
+                    <h4>Precious Ezeigbo</h4>
+                    <p>Backend Developer</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/precious-ezeigbo-38902b247" target="_blank">LinkedIn</a>
+                        <a href="https://github.com/PreciousEzeigbo" target="_blank">GitHub</a>
+                        <a href="https://x.com/PreciousEzeigbo" target="_blank">X</a>
+                    </div>
+                </div>
+                <!-- Add more team members as needed -->
+            </div>
+            <p>Explore our <a href="https://github.com/PreciousEzeigbo/Thinky-Tots" target="_blank">GitHub repository</a> for more details about the project.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Thinky-Tots. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
