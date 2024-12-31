@@ -3,6 +3,7 @@ const lowercaseDisplay = document.getElementById("lowercase-alphabets");
 const timer = document.getElementById("time");
 let timerInterval;
 let puzzle1Complete = false;
+let puzzle2Complete = false;
 let clickedUppercase = null;
 
 // Function to shuffle lowercase letters for puzzle 1
@@ -157,7 +158,7 @@ function setupPuzzle2() {
             }
 
             if ([...orderBoxes].every(box => box.textContent !== "")) {
-                puzzle1Complete = true;
+                puzzle2Complete = true;
                 setTimeout(() => switchToPuzzle3(), 1000);
             }
         });
@@ -165,7 +166,7 @@ function setupPuzzle2() {
 }
 
 
-// Puzzle 2: Alphabetical Ordering
+// Puzzle 3: Unscramble the Alphabets
 function setupPuzzle3() {
     const alphasDisplayed = document.getElementById("alphas-displayed");
     const alphasOrder = document.getElementById("alphas-order");
