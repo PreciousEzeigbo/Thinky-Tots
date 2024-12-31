@@ -163,7 +163,7 @@ def register_routes(app, db, bcrypt):
     @public_bp.route('/alphas')
     @login_required
     def alphas():
-        """Randomize and display uppercase and lowercase letters"""
+        """ Alphabets Puzzle """
         # Define the list of uppercase and lowercase letters
         uppercase_alphabet = [chr(i) for i in range(65, 91)]
         lowercase_alphabet = [chr(i) for i in range(97, 123)]
@@ -211,6 +211,14 @@ def register_routes(app, db, bcrypt):
 
         # Pass the numbers to the template
         return render_template("numbers.html", display_numbers=numbers_sequence)
+    
+    @public_bp.route('/numrix')
+    @login_required
+    def numrix():
+        """ Numbers Puzzle """
+        # Generate 8 random numbers with no dupplicates ranging from 1 to 100 
+        numbers = random.sample(range(1, 101), 8)
+        return render_template("numrix.html", number_displayed=numbers)
 
 
     # Custom error pages
