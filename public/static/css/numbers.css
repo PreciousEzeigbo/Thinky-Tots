@@ -35,3 +35,24 @@
 .item {
     font-size: 35px;
 }
+
+.numrix-redirect {
+    display: inline-block;
+    font-size: 30px;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px;
+    background-color: #091a3a;
+    border-radius: 5px;
+}
+
+.numrix-redirect a {
+    text-decoration: none;
+    color: white;
+    display: block;
+}
+
+.numrix-redirect p {
+    font-size: 30px;
+    margin: 0;
+}
