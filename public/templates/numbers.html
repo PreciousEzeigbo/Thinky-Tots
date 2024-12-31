@@ -49,6 +49,11 @@
                 <div class="item">{{ display_numbers }}</div>
             </div>
         </div>
+        <div class="numrix-redirect">
+            <a href="{{ url_for('public.numrix') }}">
+                <p>Play Puzzle</p>
+            </a>
+        </div>
     </section>
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 </body>
