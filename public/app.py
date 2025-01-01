@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 
-# Setup library connections
+# library connections
 db = SQLAlchemy() # For database operation
 login_manager = LoginManager() # For handling user authentication and session management
 bcrypt = Bcrypt() # For password hashing
@@ -22,7 +22,7 @@ def create_app():
     db.init_app(app)
     bcrypt.init_app(app)
 
-    # Set up login manager and specify login view
+    # login manager set up
     login_manager.init_app(app)
 
     # Configure login messages and redirect for login

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alphabet Quiz - ThinkyTots</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div id="alphabetQuizRoot"></div>
+
+    <script type="text/babel">
+        const AlphabetQuiz = () => {
+            const [difficulty, setDifficulty] = React.useState(1);
+            const [score, setScore] = React.useState(0);
+            const [timeLeft, setTimeLeft] = React.useState(120); // 2 minutes
+            const [gameOver, setGameOver] = React.useState(false);
+            const [showExitConfirm, setShowExitConfirm] = React.useState(false);
+            const [letters, setLetters] = React.useState([]);
+            const [selectedLetter, setSelectedLetter] = React.useState(null);
+            const [correctPairs, setCorrectPairs] = React.useState([]);
+            const [roundComplete, setRoundComplete] = React.useState(false);
+
+            // Generate letters based on difficulty
+            const generateLetters = (diff) => {
+                const letterCount = Math.min(3 + diff * 2, 8); // Increases from 5 to max 10 letters
+                const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const shuffled = alphabet.split('')
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, letterCount);
+                
+                const upperCase = shuffled;
+                const lowerCase = shuffled.map(l => l.toLowerCase());
+                
+                return {
+                    upper: upperCase.sort(() => Math.random() - 0.5),
+                    lower: lowerCase.sort(() => Math.random() - 0.5)
+                };
+            };
+
+            // Initialize or reset game
+            const startNewRound = () => {
+                const newLetters = generateLetters(difficulty);
+                setLetters(newLetters);
+                setSelectedLetter(null);
+                setCorrectPairs([]);
+                setRoundComplete(false);
+                setTimeLeft(120);
+            };
+
+            // Handle letter selection and matching
+            const handleLetterClick = (letter, isUpper) => {
+                if (correctPairs.includes(letter.toUpperCase())) return;
+                
+                if (!selectedLetter) {
+                    setSelectedLetter({ letter, isUpper });
+                } else {
+                    const selectedUpper = selectedLetter.isUpper ? selectedLetter.letter : letter;
+                    const selectedLower = selectedLetter.isUpper ? letter : selectedLetter.letter;
+                    
+                    if (selectedUpper.toLowerCase() === selectedLower) {
+                        setCorrectPairs(prev => [...prev, selectedUpper.toUpperCase()]);
+                        setScore(prev => prev + (difficulty * 10));
+                        
+                        // Check if round is complete
+                        if (correctPairs.length + 1 === letters.upper.length) {
+                            setRoundComplete(true);
+                            setDifficulty(prev => Math.min(prev + 1, 5));
+                        }
+                    }
+                    setSelectedLetter(null);
+                }
+            };
+
+            // Timer effect
+            React.useEffect(() => {
+                if (timeLeft > 0 && !gameOver && !roundComplete) {
+                    const timer = setInterval(() => {
+                        setTimeLeft(prev => prev - 1);
+                    }, 1000);
+                    return () => clearInterval(timer);
+                } else if (timeLeft === 0) {
+                    setGameOver(true);
+                }
+            }, [timeLeft, gameOver, roundComplete]);
+
+            // Initial game setup
+            React.useEffect(() => {
+                startNewRound();
+            }, [difficulty]);
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            const handleExit = () => {
+                if (score > 0) {
+                    setShowExitConfirm(true);
+                } else {
+                    window.location.href = "{{ url_for('public.home') }}";
+                }
+            };
+
+            return (
+                <div className="max-w-3xl mx-auto p-6 space-y-6">
+                    {/* Header */}
+                    <div className="flex justify-between items-center">
+                        <div className="text-2xl font-bold">Alphabet Matching</div>
+                        <div className="flex items-center gap-4">
+                            <span className="font-mono text-xl">{formatTime(timeLeft)}</span>
+                            <button
+                                onClick={handleExit}
+                                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                            >
+                                Exit Game
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Score and Level */}
+                    <div className="flex justify-between items-center">
+                        <div className="text-lg">Score: {score}</div>
+                        <div className="text-lg">Level: {difficulty}</div>
+                    </div>
+
+                    {/* Game Area */}
+                    {!gameOver && !roundComplete ? (
+                        <div className="space-y-8">
+                            {/* Uppercase Letters */}
+                            <div className="flex flex-wrap justify-center gap-4">
+                                {letters.upper?.map((letter, index) => (
+                                    <button
+                                        key={`upper-${index}`}
+                                        onClick={() => handleLetterClick(letter, true)}
+                                        disabled={correctPairs.includes(letter)}
+                                        className={`w-16 h-16 text-3xl font-bold rounded-lg ${
+                                            correctPairs.includes(letter)
+                                                ? 'bg-green-200 text-green-800'
+                                                : selectedLetter?.letter === letter && selectedLetter?.isUpper
+                                                ? 'bg-blue-200 text-blue-800'
+                                                : 'bg-white border-2 border-gray-300 hover:border-blue-500'
+                                        }`}
+                                    >
+                                        {letter}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Lowercase Letters */}
+                            <div className="flex flex-wrap justify-center gap-4">
+                                {letters.lower?.map((letter, index) => (
+                                    <button
+                                        key={`lower-${index}`}
+                                        onClick={() => handleLetterClick(letter, false)}
+                                        disabled={correctPairs.includes(letter.toUpperCase())}
+                                        className={`w-16 h-16 text-3xl font-bold rounded-lg ${
+                                            correctPairs.includes(letter.toUpperCase())
+                                                ? 'bg-green-200 text-green-800'
+                                                : selectedLetter?.letter === letter && !selectedLetter?.isUpper
+                                                ? 'bg-blue-200 text-blue-800'
+                                                : 'bg-white border-2 border-gray-300 hover:border-blue-500'
+                                        }`}
+                                    >
+                                        {letter}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center space-y-4">
+                            {gameOver ? (
+                                <>
+                                    <h2 className="text-2xl font-bold">Game Over!</h2>
+                                    <p className="text-xl">Final Score: {score}</p>
+                                    <div className="space-x-4">
+                                        <button
+                                            onClick={() => {
+                                                setGameOver(false);
+                                                setScore(0);
+                                                setDifficulty(1);
+                                                startNewRound();
+                                            }}
+                                            className="p-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                                        >
+                                            Play Again
+                                        </button>
+                                        <button
+                                            onClick={() => window.location.href = "{{ url_for('public.home') }}"}
+                                            className="p-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                                        >
+                                            Exit to Home
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <h2 className="text-2xl font-bold text-green-600">Round Complete!</h2>
+                                    <p className="text-xl">Great job! Ready for the next level?</p>
+                                    <button
+                                        onClick={startNewRound}
+                                        className="p-3 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                                    >
+                                        Start Next Round
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Exit Confirmation Modal */}
+                    {showExitConfirm && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                            <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+                                <h3 className="text-lg font-bold mb-4">Exit Game?</h3>
+                                <p className="mb-4">Are you sure you want to exit? Your progress will be lost.</p>
+                                <div className="flex justify-end gap-4">
+                                    <button
+                                        onClick={() => setShowExitConfirm(false)}
+                                        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={() => window.location.href = "{{ url_for('public.home') }}"}
+                                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                                    >
+                                        Exit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Rules */}
+                    <div className="mt-8 p-4 bg-gray-100 rounded-lg">
+                        <h3 className="font-bold">How to Play</h3>
+                        <ul className="list-disc ml-5 mt-2">
+                            <li>Match uppercase letters with their lowercase pairs</li>
+                            <li>Complete each round within 2 minutes</li>
+                            <li>Each level adds more letters to match</li>
+                            <li>Score points based on your level and speed</li>
+                            <li>Progress through levels to face tougher challenges</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<AlphabetQuiz />, document.getElementById('alphabetQuizRoot'));
+    </script>
+</body>
+</html>

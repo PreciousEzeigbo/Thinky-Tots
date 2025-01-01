@@ -154,11 +154,11 @@ def register_routes(app, db, bcrypt):
         """Render the settings page for the logged-in user."""
         return render_template('settings.html')
     
-    @public_bp.route('/alphabets')
+    @public_bp.route('/alphabetquiz')
     @login_required
-    def alphabets():
-        """Learnig page route to learn alphabets"""
-        return render_template("alphabets.html")
+    def alphabetquiz():
+        """Alphabet matching quiz route"""
+        return render_template("alphabetquiz.html")
     
     @public_bp.route('/alphas')
     @login_required
@@ -219,6 +219,12 @@ def register_routes(app, db, bcrypt):
         # Generate 8 random numbers with no dupplicates ranging from 1 to 100 
         numbers = random.sample(range(1, 101), 8)
         return render_template("numrix.html", number_displayed=numbers)
+    
+    @public_bp.route('/mathquiz')
+    @login_required
+    def mathquiz():
+        """Math Quiz route"""
+        return render_template("mathquiz.html")
 
 
     # Custom error pages
