@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/alphas.css') }}">
 </head>
 <body>
@@ -13,36 +12,12 @@
         <div class="thinkytots">
             <img src="{{ url_for('static', filename='images/thinkytots.jpg') }}" alt="thinkytots-image" class="thinkytots-logo">
         </div>
-        <i class="fa-solid fas fa-bars" id="menu-button" onclick="menuButtonClicked()"></i>
-
-        <div class="user">
-            <a href="{{ url_for('public.profile') }}">
-                <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="user-image" class="user-profile">
-            </a>
-            <span id="username">{{ current_user.username }}</span>
-        </div>
     </header>
-    <div class="sidebar">
-        <ul>
-            <li>
-                <a href="{{ url_for('public.home') }}"><i class="fa-solid fas fa-home"></i>
-                <span class="nav-text">Dashboard</span></a>
-                <span class="tooltip">Dashboard</span>
-            </li>
-            <li>
-                <a href="{{ url_for('public.settings') }}"><i class="fa-solid fas fa-cogs"></i>
-                <span class="nav-text">Settings</span></a>
-                <span class="tooltip">Settings</span>
-            </li>
-            <li>
-                <a href="{{ url_for('public.logout') }}"><i class="fa-solid fas fa-sign-out-alt"></i>
-                <span class="nav-text">Logout</span></a>
-                <span class="tooltip">Logout</span>
-            </li>
-        </ul>
-    </div>
+
     <section class="main-container">
         <div class="content">
+            <p id="score">Score: 0</p>
+            <p id="time">TIMER</p>
             <h1 id="puzzle-1">Pairing Uppercase Letters with Lowercase Letters</h1>
             <div class="alphabets" id="uppercase-alphabets">
                 <div class="box" id="A" class="uppercase">{{ uppercase_alphabet[0] }}</div>
@@ -54,7 +29,7 @@
                 <div class="box" id="G" class="uppercase">{{ uppercase_alphabet[6] }}</div>
                 <div class="box" id="H" class="uppercase">{{ uppercase_alphabet[7] }}</div>
             </div>
-            <p id="time">TIMER</p>
+            
             <div class="alphabets" id="lowercase-alphabets">
                 <div class="box" id="a" class="lowercase">{{ lowercase_alphabet[0] }}</div>
                 <div class="box" id="b" class="lowercase">{{ lowercase_alphabet[1] }}</div>
@@ -64,7 +39,19 @@
                 <div class="box" id="f" class="lowercase">{{ lowercase_alphabet[5] }}</div>
                 <div class="box" id="g" class="lowercase">{{ lowercase_alphabet[6] }}</div>
                 <div class="box" id="h" class="lowercase">{{ lowercase_alphabet[7] }}</div>
-            </div> 
+            </div>
+            <div class="rules" id="rules-1">
+                <h1>How to Play (Puzzle 1)</h1>
+                <ul>
+                    <li>Match uppercase alphabets with their lowercase pairs</li>
+                    <li>Click an uppercase letter, then its corresponding lowercase letter</li>
+                    <li>Match one pair at a time</li>
+                    <li>Correct matches add 2 points and turn both letters green</li>
+                    <li>Incorrect matches deduct 2 points and reset after a moment</li>
+                    <li>Complete all pairs to advance to the next puzzle</li>
+                    <li>Use the timer to track progress and improve speed</li>
+                </ul>
+            </div>
 
             <h2 id="puzzle-2" style="display: none;">Arrange Alphabets in Alphabetical Order</h2>
             <div class="alphabets" id="alphabets-order" style="display: none;">
@@ -87,6 +74,17 @@
                 <div class="box">{{ alphabet_displayed[5] }}</div>
                 <div class="box">{{ alphabet_displayed[6] }}</div>
                 <div class="box">{{ alphabet_displayed[7] }}</div>
+            </div>
+            <div class="rules" id="rules-2" style="display: none;">
+                <h1>How to Play (Puzzle 2)</h1>
+                <ul>
+                    <li>Arrange the given letters in the correct alphabetical order.</li>
+                    <li>Click on a letter to place it in the next available position.</li>
+                    <li>The letter will only be placed in the correct spot if it matches the expected order.</li>
+                    <li>Correct placements add 5 points and lock the letter in place.</li>
+                    <li>Incorrect placements show an "🙅‍♂️" emoji and deduct 3 points, resetting the selection.</li>
+                    <li>Complete the puzzle quickly for a better score and move to Puzzle 3 when done.</li>
+                </ul>                
             </div>
 
             <h3 id="puzzle-3" style="display: none;">Unscramble the Alphabets in Alphabetical Order</h3>
@@ -147,9 +145,19 @@
                 <div class="item">{{ alpha_displayed[24] }}</div>
                 <div class="item">{{ alpha_displayed[25] }}</div>
             </div>
+            <div class="rules" id="rules-3" style="display: none;">
+                <h1>How to Play (Puzzle 3)</h1>
+                <ul>
+                    <li>Click on the scrambled letters in the correct alphabetical order</li>
+                    <li>If the letter is correct, it will turn green in both the display and order sections</li>
+                    <li>Correct placements add 8 points and lock the letter in place.</li>
+                    <li>Incorrect matches will show a red "🙅‍♀️" and deduct 4 points, resetting after 2 seconds.</li>
+                    <li>Each letter can only be matched once</li>
+                    <li>Complete the puzzle by matching all letters correctly</li>
+                </ul>
+            </div>
         </div>
     </section>
-    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
     <script src="{{ url_for('static', filename='js/alphas.js') }}"></script>
 </body>
 </html>

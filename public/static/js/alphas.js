@@ -1,10 +1,13 @@
 // Puzzle 1: Uppercase and Lowercase Matching
 const lowercaseDisplay = document.getElementById("lowercase-alphabets");
 const timer = document.getElementById("time");
+const scoreUpdate = document.getElementById("score");
 let timerInterval;
 let puzzle1Complete = false;
 let puzzle2Complete = false;
 let clickedUppercase = null;
+
+let score = 0;
 
 // Function to shuffle lowercase letters for puzzle 1
 function shuffleLowercase() {
@@ -42,17 +45,24 @@ function disableInteractions() {
     });
 }
 
+// Function to Display score
+function updateScore() {
+    scoreUpdate.textContent = "Score: " + score;
+}
+
 // Function to switch to Puzzle 2 after Puzzle 1 is completed
 function switchToPuzzle2() {
     document.getElementById("puzzle-1").style.display = "none";
     document.getElementById("lowercase-alphabets").style.display = "none";
     document.getElementById("uppercase-alphabets").style.display = "none";
     document.getElementById("time").style.display = "none";
+    document.getElementById("rules-1").style.display = "none";
     document.getElementById("puzzle-2").style.display = "flex";
     document.getElementById("alphabets-order").style.display = "flex";
     document.getElementById("alphabets-displayed").style.display = "flex";
     document.getElementById("time").style.display = "flex";
     document.getElementById("time").style.justifyContent = "center";
+    document.getElementById("rules-2").style.display = "flex";
 }
 
 // Function to switch to Puzzle 3 after Puzzle 2 is completed
@@ -61,11 +71,13 @@ function switchToPuzzle3() {
     document.getElementById("alphabets-order").style.display = "none";
     document.getElementById("alphabets-displayed").style.display = "none";
     document.getElementById("time").style.display = "none";
+    document.getElementById("rules-2").style.display = "none";
     document.getElementById("puzzle-3").style.display = "flex";
     document.getElementById("alphas-order").style.display = "flex";
     document.getElementById("alphas-displayed").style.display = "flex";
     document.getElementById("time").style.display = "flex";
     document.getElementById("time").style.justifyContent = "center";
+    document.getElementById("rules-3").style.display = "flex";
 }
 
 // Puzzle 1: Uppercase and Lowercase Matching Logic
@@ -96,23 +108,32 @@ function setupPuzzle1() {
                 lowercaseBox.style.pointerEvents = "none";
                 clickedUppercase = null;
 
-                // Check if all pairs are correct
-                if ([...uppercaseBoxes].every(box => box.style.backgroundColor === "green") &&
-                    [...lowercaseBoxes].every(box => box.style.backgroundColor === "green")) {
-                    puzzle1Complete = true;
-                    setTimeout(() => switchToPuzzle2(), 1000);
-                }
+                // Correct match to add 2 points
+                score += 2;
+                updateScore();
             } else {
                 lowercaseBox.style.backgroundColor = "red";
                 setTimeout(function () {
                     lowercaseBox.style.backgroundColor = "";
                     clickedUppercase.style.backgroundColor = "";
                     clickedUppercase = null;
-                }, 2000);
+                }, 1000);
+
+                // Incorrect match to deduct 2 points
+                score -= 2;
+                updateScore();
+            }
+
+            // Check if all pairs are correct
+            if ([...uppercaseBoxes].every(box => box.style.backgroundColor === "green") &&
+                [...lowercaseBoxes].every(box => box.style.backgroundColor === "green")) {
+                puzzle1Complete = true;
+                setTimeout(() => switchToPuzzle2(), 1000);
             }
         });
     });
-}
+};
+
 
 // Puzzle 2: Alphabetical Ordering
 function setupPuzzle2() {
@@ -139,6 +160,10 @@ function setupPuzzle2() {
                 correspondingOrderBox.style.backgroundColor = "lightgreen";
                 renderedAlphabets.style.backgroundColor = "lightgreen";
                 selectedIndex++;
+
+                // Correct match to add 5 points
+                score += 5;
+                updateScore();
             } else {
                 const correspondingOrderBox = document.getElementById("box-" + (selectedIndex + 1));
                 correspondingOrderBox.textContent = "🙅‍♂️";
@@ -154,7 +179,11 @@ function setupPuzzle2() {
 
                     renderedAlphabets.style.pointerEvents = "auto";
                     displayedBoxes.forEach(box => box.style.pointerEvents = "auto");
-                }, 2000);
+                }, 1000);
+
+                // Incorrect match to deduct 3 points
+                score -= 3;
+                updateScore();
             }
 
             if ([...orderBoxes].every(box => box.textContent !== "")) {
@@ -191,6 +220,10 @@ function setupPuzzle3() {
                 correspondingOrderItem.style.backgroundColor = "green";
                 renderedAlphas.style.backgroundColor = "green";
                 currentIndex++;
+
+                // Correct match to add 8 points
+                score += 8;
+                updateScore();
             } else {
                 const correspondingOrderItem = document.getElementById("item-" + (currentIndex + 1));
                 correspondingOrderItem.textContent = "🙅‍♀️";
@@ -207,6 +240,10 @@ function setupPuzzle3() {
                     renderedAlphas.style.pointerEvents = "auto";
                     displayedItems.forEach(box => box.style.pointerEvents = "auto");
                 }, 2000);
+
+                // Incorrect match to deduct 4 points
+                score -= 4;
+                updateScore();
             }
 
             if ([...orderItems].every(box => box.textContent !== "")) {

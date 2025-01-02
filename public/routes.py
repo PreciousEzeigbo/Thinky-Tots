@@ -148,11 +148,11 @@ def register_routes(app, db, bcrypt):
         """Home page route (or dashboard page)"""
         return render_template("home.html")
     
-    @public_bp.route('/settings')
+    @public_bp.route('/score')
     @login_required
-    def settings():
+    def score():
         """Render the settings page for the logged-in user."""
-        return render_template('settings.html')
+        return render_template('score.html')
     
     @public_bp.route('/alphabetquiz')
     @login_required

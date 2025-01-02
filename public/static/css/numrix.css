@@ -68,15 +68,14 @@
     background-color: rgb(233, 233, 233);
     color: black;
     text-align: center;
-    padding: 10px;
+    padding: 20px;
     font-size: 30px;
-    width: 60px;
-    min-width: 60px;
+    width: 80px;
+    min-width: 80px;
     border-radius: 5px;
     border: 2px solid black;
     box-shadow: 0 4px 8px #091a3a;
     margin: 0;
-    cursor: pointer;
 }
 
 #time {
@@ -86,4 +85,9 @@
     margin-top: 30px;
     margin-bottom: 30px;
     color: #091a3a;
+}
+
+.box-operator {
+    font-size: 50px;
+    padding: 10px;
 }

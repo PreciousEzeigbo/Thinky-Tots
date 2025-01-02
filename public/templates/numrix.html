@@ -30,9 +30,9 @@
                 <span class="tooltip">Dashboard</span>
             </li>
             <li>
-                <a href="{{ url_for('public.settings') }}"><i class="fa-solid fas fa-cogs"></i>
-                <span class="nav-text">Settings</span></a>
-                <span class="tooltip">Settings</span>
+                <a href="{{ url_for('public.score') }}"><i class="fa-solid fas fa-cogs"></i>
+                <span class="nav-text">Score</span></a>
+                <span class="tooltip">Score</span>
             </li>
             <li>
                 <a href="{{ url_for('public.logout') }}"><i class="fa-solid fas fa-sign-out-alt"></i>
@@ -64,6 +64,15 @@
                 <div class="box">{{ number_displayed[5] }}</div>
                 <div class="box">{{ number_displayed[6] }}</div>
                 <div class="box">{{ number_displayed[7] }}</div>
+            </div>
+
+            <h2 id="puzzle-1">Arrange Numbers in Numerical Order</h2>
+            <div class="numbers" id="numble">
+                <div class="item">{{ number_displayed[0] }}</div>
+                <div class="box-operator"> + </div>
+                <div class="item">{{ number_displayed[0] }}</div>
+                <div class="box-operator"> = </div>
+                <div class="item">{{ number_displayed[0] }}</div>
             </div>
         </div>
     </section>
