@@ -91,8 +91,8 @@ header .thinkytots-logo {
     text-align: center;
     padding: 10px;
     font-size: 30px;
-    width: 60px;
-    min-width: 60px;
+    width: 50px;
+    min-width: 50px;
     border-radius: 5px;
     border: 2px solid black;
     box-shadow: 0 4px 8px #091a3a;
@@ -104,8 +104,7 @@ header .thinkytots-logo {
     text-align: center;
     font-size: 30px;
     font-weight: bold;
-    margin-top: 30px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     color: #091a3a;
 }
 
@@ -114,8 +113,8 @@ header .thinkytots-logo {
     font-size: 30px;
     font-weight: bold;
     margin-top: 30px;
-    margin-bottom: 30px;
     color: #091a3a;
+    margin-bottom: 10px;
 }
 
 .rules {
@@ -147,4 +146,16 @@ header .thinkytots-logo {
     margin-bottom: 10px;
     padding-left: 0;
     position: relative;
+}
+
+#quitButton {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: -10px;
 }

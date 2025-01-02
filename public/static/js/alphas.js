@@ -2,6 +2,7 @@
 const lowercaseDisplay = document.getElementById("lowercase-alphabets");
 const timer = document.getElementById("time");
 const scoreUpdate = document.getElementById("score");
+const quitButton = document.getElementById("quitButton");
 let timerInterval;
 let puzzle1Complete = false;
 let puzzle2Complete = false;
@@ -35,6 +36,25 @@ function startTimer(duration) {
             timeLeft--;
         }
     }, 1000);
+}
+
+// Function to quit puzzle
+function toQuit() {
+    // Ask user before quitting puzzle
+    const confirmQuit = confirm("Are you sure you want to quit the puzzle?");
+    if (confirmQuit) {
+        // Stop the timer
+        clearInterval(timerInterval);
+
+        // Disable all alphabet interactions
+        disableInteractions();
+
+        // Optionally, show a message to indicate the game is paused or quit
+        alert("You have quit the game. Your progress will be lost.");
+
+        // Redirect to home.html after quitting
+        window.location.href = "/home";
+    }
 }
 
 // Function to disable all alphabet interactions
@@ -117,7 +137,7 @@ function setupPuzzle1() {
                     lowercaseBox.style.backgroundColor = "";
                     clickedUppercase.style.backgroundColor = "";
                     clickedUppercase = null;
-                }, 1000);
+                }, 2000);
 
                 // Incorrect match to deduct 2 points
                 score -= 2;
@@ -179,7 +199,7 @@ function setupPuzzle2() {
 
                     renderedAlphabets.style.pointerEvents = "auto";
                     displayedBoxes.forEach(box => box.style.pointerEvents = "auto");
-                }, 1000);
+                }, 2000);
 
                 // Incorrect match to deduct 3 points
                 score -= 3;
@@ -239,7 +259,7 @@ function setupPuzzle3() {
 
                     renderedAlphas.style.pointerEvents = "auto";
                     displayedItems.forEach(box => box.style.pointerEvents = "auto");
-                }, 2000);
+                }, 1500);
 
                 // Incorrect match to deduct 4 points
                 score -= 4;
@@ -258,9 +278,12 @@ function setupPuzzle3() {
 
 // DOM content loaded event
 document.addEventListener("DOMContentLoaded", function () {
-    startTimer(600);
+    startTimer(1200);
     shuffleLowercase();
     setupPuzzle1();
     setupPuzzle2();
     setupPuzzle3();
+
+    // Event listener for quit button
+    quitButton.addEventListener("click", toQuit);
 });
