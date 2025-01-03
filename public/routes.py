@@ -154,12 +154,6 @@ def register_routes(app, db, bcrypt):
         """Render the settings page for the logged-in user."""
         return render_template('score.html')
     
-    @public_bp.route('/alphabetquiz')
-    @login_required
-    def alphabetquiz():
-        """Alphabet matching quiz route"""
-        return render_template("alphabetquiz.html")
-    
     @public_bp.route('/alphas')
     @login_required
     def alphas():
@@ -198,27 +192,6 @@ def register_routes(app, db, bcrypt):
                                lowercase_alphabet=lowercase_alphabet_shuffled,
                                alphabet_displayed=alphabet_displayed_randomized,
                                alpha_displayed=alpha_displayed_randomized)
-    
-    @public_bp.route('/numbers')
-    @login_required
-    def numbers():
-        """Home page route (or dashboard page)"""
-        # Generate numbers ranging from 1 to 100
-        numbers = list(range(1, 101))
-
-        # Join numbers into a string using one of the methods mentioned
-        numbers_sequence = ', '.join(str(number) for number in numbers)
-
-        # Pass the numbers to the template
-        return render_template("numbers.html", display_numbers=numbers_sequence)
-    
-    @public_bp.route('/numrix')
-    @login_required
-    def numrix():
-        """ Numbers Puzzle """
-        # Generate 8 random numbers with no dupplicates ranging from 1 to 100 
-        numbers = random.sample(range(1, 101), 8)
-        return render_template("numrix.html", number_displayed=numbers)
     
     @public_bp.route('/mathquiz')
     @login_required
