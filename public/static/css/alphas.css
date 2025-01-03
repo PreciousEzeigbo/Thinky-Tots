@@ -59,6 +59,12 @@ header .thinkytots-logo {
     text-align: center;
 }
 
+.content h4 {
+    font-size: 30px;
+    justify-content: center;
+    text-align: center;
+}
+
 .alphabets {
     display: flex;
     flex-wrap: wrap;
@@ -158,4 +164,81 @@ header .thinkytots-logo {
     border-radius: 5px;
     cursor: pointer;
     margin-bottom: -10px;
+}
+
+#startPuzzle1 {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: -10px;
+}
+
+#nextPuzzle2 {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: -10px;
+}
+
+#nextPuzzle3 {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: -10px;
+}
+
+.overall-score {
+    font-size: 40px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.redirect {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+#try-again {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: -10px;
+}
+
+#go-to-dashboard {
+    background-color: #091a3a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: -10px;
+}
+
+.redirect a {
+    text-decoration: none;
 }

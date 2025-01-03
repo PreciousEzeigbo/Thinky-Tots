@@ -1,24 +1,18 @@
-// Puzzle 1: Uppercase and Lowercase Matching
+// DOM Elements
 const lowercaseDisplay = document.getElementById("lowercase-alphabets");
 const timer = document.getElementById("time");
 const scoreUpdate = document.getElementById("score");
+const startPuzzle1 = document.getElementById("startPuzzle1");
+const nextPuzzle2 = document.getElementById("nextPuzzle2");
+const nextPuzzle3 = document.getElementById("nextPuzzle3");
 const quitButton = document.getElementById("quitButton");
+
+// Variable
 let timerInterval;
 let puzzle1Complete = false;
 let puzzle2Complete = false;
 let clickedUppercase = null;
-
 let score = 0;
-
-// Function to shuffle lowercase letters for puzzle 1
-function shuffleLowercase() {
-    const boxes = Array.from(lowercaseDisplay.getElementsByClassName("box"));
-    for (let a = boxes.length - 1; a > 0; a--) {
-        const b = Math.floor(Math.random() * (a + 1));
-        [boxes[a], boxes[b]] = [boxes[b], boxes[a]];
-    }
-    boxes.forEach(box => lowercaseDisplay.appendChild(box));
-}
 
 // Timer function
 function startTimer(duration) {
@@ -36,6 +30,29 @@ function startTimer(duration) {
             timeLeft--;
         }
     }, 1000);
+}
+
+// Function to shuffle lowercase letters for puzzle 1
+function shuffleLowercase() {
+    const boxes = Array.from(lowercaseDisplay.getElementsByClassName("box"));
+    for (let a = boxes.length - 1; a > 0; a--) {
+        const b = Math.floor(Math.random() * (a + 1));
+        [boxes[a], boxes[b]] = [boxes[b], boxes[a]];
+    }
+    boxes.forEach(box => lowercaseDisplay.appendChild(box));
+}
+
+// Function to disable all alphabet interactions
+function disableInteractions() {
+    const allBoxes = document.querySelectorAll(".box");
+    allBoxes.forEach(box => {
+        box.style.pointerEvents = "none";
+    });
+}
+
+// Function to Display score
+function updateScore() {
+    scoreUpdate.textContent = "Score: " + score;
 }
 
 // Function to quit puzzle
@@ -57,48 +74,6 @@ function toQuit() {
     }
 }
 
-// Function to disable all alphabet interactions
-function disableInteractions() {
-    const allBoxes = document.querySelectorAll(".box");
-    allBoxes.forEach(box => {
-        box.style.pointerEvents = "none";
-    });
-}
-
-// Function to Display score
-function updateScore() {
-    scoreUpdate.textContent = "Score: " + score;
-}
-
-// Function to switch to Puzzle 2 after Puzzle 1 is completed
-function switchToPuzzle2() {
-    document.getElementById("puzzle-1").style.display = "none";
-    document.getElementById("lowercase-alphabets").style.display = "none";
-    document.getElementById("uppercase-alphabets").style.display = "none";
-    document.getElementById("time").style.display = "none";
-    document.getElementById("rules-1").style.display = "none";
-    document.getElementById("puzzle-2").style.display = "flex";
-    document.getElementById("alphabets-order").style.display = "flex";
-    document.getElementById("alphabets-displayed").style.display = "flex";
-    document.getElementById("time").style.display = "flex";
-    document.getElementById("time").style.justifyContent = "center";
-    document.getElementById("rules-2").style.display = "flex";
-}
-
-// Function to switch to Puzzle 3 after Puzzle 2 is completed
-function switchToPuzzle3() {
-    document.getElementById("puzzle-2").style.display = "none";
-    document.getElementById("alphabets-order").style.display = "none";
-    document.getElementById("alphabets-displayed").style.display = "none";
-    document.getElementById("time").style.display = "none";
-    document.getElementById("rules-2").style.display = "none";
-    document.getElementById("puzzle-3").style.display = "flex";
-    document.getElementById("alphas-order").style.display = "flex";
-    document.getElementById("alphas-displayed").style.display = "flex";
-    document.getElementById("time").style.display = "flex";
-    document.getElementById("time").style.justifyContent = "center";
-    document.getElementById("rules-3").style.display = "flex";
-}
 
 // Puzzle 1: Uppercase and Lowercase Matching Logic
 function setupPuzzle1() {
@@ -269,20 +244,82 @@ function setupPuzzle3() {
             if ([...orderItems].every(box => box.textContent !== "")) {
                 alert("Puzzle is complete!");
                 disableInteractions();
+                setTimeout(() => displayFinalScore(), 1000);
             }
         });
     });
 }
 
 
+// Function to switch to Puzzle 2 after Puzzle 1 is completed
+function switchToPuzzle2() {
+    document.getElementById("puzzle-1").style.display = "none";
+    document.getElementById("lowercase-alphabets").style.display = "none";
+    document.getElementById("uppercase-alphabets").style.display = "none";
+    document.getElementById("rules-2").style.display = "flex";
+}
+
+// Function to switch to Puzzle 3 after Puzzle 2 is completed
+function switchToPuzzle3() {
+    document.getElementById("puzzle-2").style.display = "none";
+    document.getElementById("alphabets-order").style.display = "none";
+    document.getElementById("alphabets-displayed").style.display = "none";
+    document.getElementById("rules-3").style.display = "flex";
+}
+
+// Function to switch to Puzzle 3 after Puzzle 2 is completed
+function displayFinalScore() {
+    document.getElementById("puzzle-3").style.display = "none";
+    document.getElementById("alphas-order").style.display = "none";
+    document.getElementById("alphas-displayed").style.display = "none";
+    document.getElementById("rules-3").style.display = "none";
+    document.getElementById("time").style.display = "none";
+    document.getElementById("quitButton").style.display = "none";
+    document.getElementById("score").style.display = "none";
+    document.getElementById("congratulations").style.display = "flex";
+    document.getElementById("redirect").style.display = "flex";
+    
+    const overallScore = document.getElementById("overall-score");
+    overallScore.style.display = "flex";
+    overallScore.textContent = `Your Score: ${score}`;
+}
 
 // DOM content loaded event
 document.addEventListener("DOMContentLoaded", function () {
-    startTimer(1200);
     shuffleLowercase();
     setupPuzzle1();
     setupPuzzle2();
     setupPuzzle3();
+
+    // Show rules and start the game when the start button is clicked
+    startPuzzle1.addEventListener("click", function () {
+        document.getElementById("rules-1").style.display = "none";
+        document.getElementById("puzzle-1").style.display = "flex";
+        document.getElementById("score").style.display = "flex";
+        document.getElementById("score").style.justifyContent = "center";
+        document.getElementById("quitButton").style.display = "flex";
+        document.getElementById("lowercase-alphabets").style.display = "flex";
+        document.getElementById("uppercase-alphabets").style.display = "flex";
+        document.getElementById("time").style.display = "flex";
+        document.getElementById("time").style.justifyContent = "center";
+        startTimer(1200);
+    });
+
+    // Show rules and start the game when the start button is clicked
+    nextPuzzle2.addEventListener("click", function () {
+        document.getElementById("rules-2").style.display = "none";
+        document.getElementById("puzzle-2").style.display = "flex";
+        document.getElementById("alphabets-order").style.display = "flex";
+        document.getElementById("alphabets-displayed").style.display = "flex";
+    });
+
+    // Show rules and start the game when the start button is clicked
+    nextPuzzle3.addEventListener("click", function () {
+        document.getElementById("rules-3").style.display = "none";
+        document.getElementById("puzzle-3").style.display = "flex";
+        document.getElementById("alphas-order").style.display = "flex";
+        document.getElementById("alphas-displayed").style.display = "flex";
+    });
 
     // Event listener for quit button
     quitButton.addEventListener("click", toQuit);
