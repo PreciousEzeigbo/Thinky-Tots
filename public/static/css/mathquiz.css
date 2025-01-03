@@ -1,0 +1,50 @@
+/* Custom styles to complement Tailwind */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    max-width: 24rem;
+    width: 100%;
+    margin: 0 1rem;
+}
+
+.feedback-message {
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.feedback-success {
+    background-color: #DEF7EC;
+    color: #03543F;
+}
+
+.feedback-error {
+    background-color: #FDE8E8;
+    color: #9B1C1C;
+}
+
+.math-question {
+    font-size: 1.875rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.rules-container {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #F3F4F6;
+    border-radius: 0.5rem;
+}
