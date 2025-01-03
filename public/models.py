@@ -32,16 +32,20 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password, password) # Compare the hashed password with the entered password
     
+    @property
+    def id(self):
+        return self.uid
+    
 class QuizScore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.uid'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
     questions_answered = db.Column(db.Integer, nullable=False)
     max_difficulty = db.Column(db.Integer, nullable=False)
     time_taken = db.Column(db.Integer, nullable=False)  # in seconds
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    user = db.relationship('User', backref=db.backref('quiz_scores', lazy=True))
+    user = db.relationship('User', back_populates='quiz_scores')
 
     def to_dict(self):
         return {

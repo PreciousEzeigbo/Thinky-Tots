@@ -246,7 +246,7 @@ def register_routes(app, db, bcrypt):
 
     @public_bp.route('/scores')
     @login_required
-    def scores_page():
+    def scores():
         return render_template('scores.html')
 
 
