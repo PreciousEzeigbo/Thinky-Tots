@@ -1,8 +1,8 @@
-from flask import Blueprint, Flask, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, Flask, render_template, jsonify, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager
 from werkzeug.security import check_password_hash
 
-from public.models import User, db
+from public.models import User, db,  QuizScore
 
 import random
 
@@ -148,12 +148,6 @@ def register_routes(app, db, bcrypt):
         """Home page route (or dashboard page)"""
         return render_template("home.html")
     
-    @public_bp.route('/score')
-    @login_required
-    def score():
-        """Render the settings page for the logged-in user."""
-        return render_template('score.html')
-    
     @public_bp.route('/alphas')
     @login_required
     def alphas():
@@ -198,19 +192,75 @@ def register_routes(app, db, bcrypt):
     def mathquiz():
         """Math Quiz route"""
         return render_template("mathquiz.html")
+    
+    @public_bp.route('/api/scores', methods=['POST'])
+    @login_required
+    def save_score():
+        data = request.json
+        
+        new_score = QuizScore(
+            user_id=current_user.id,
+            score=data['score'],
+            questions_answered=data['questionsAnswered'],
+            max_difficulty=data['maxDifficulty'],
+            time_taken=600 - data['timeLeft']
+        )
+        
+        db.session.add(new_score)
+        db.session.commit()
+        
+        return jsonify({'message': 'Score saved successfully'})
+
+    @public_bp.route('/api/scores/personal', methods=['GET'])
+    @login_required
+    def get_personal_scores():
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        
+        scores = QuizScore.query.filter_by(user_id=current_user.id).order_by(
+            QuizScore.score.desc(), 
+            QuizScore.created_at.desc()
+        ).paginate(page=page, per_page=per_page)
+        
+        return jsonify({
+            'scores': [score.to_dict() for score in scores.items],
+            'total_pages': scores.pages,
+            'current_page': scores.page
+        })
+
+    @public_bp.route('/api/scores/leaderboard', methods=['GET'])
+    def get_leaderboard():
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        
+        scores = QuizScore.query.order_by(
+            QuizScore.score.desc(), 
+            QuizScore.created_at.desc()
+        ).paginate(page=page, per_page=per_page)
+        
+        return jsonify({
+            'scores': [score.to_dict() for score in scores.items],
+            'total_pages': scores.pages,
+            'current_page': scores.page
+        })
+
+    @public_bp.route('/scores')
+    @login_required
+    def scores_page():
+        return render_template('scores.html')
 
 
     # Custom error pages
 
     # Invalid pages
-    @app.errorhandler(404)
+    @public_bp.errorhandler(404)
     def page_not_found(e):
         return render_template("404.html"), 404
 
     # Internal server error pages
-    @app.errorhandler(500)
+    @public_bp.errorhandler(500)
     def server_error(e):
         return render_template("500.html"), 500
 
-    # Register Blueprint with the app
+    # Register Blueprint with the public_bp
     app.register_blueprint(public_bp)

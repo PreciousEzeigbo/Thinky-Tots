@@ -26,6 +26,28 @@ const MathQuiz = () => {
         const max = Math.pow(10, difficulty);
         return Math.floor(Math.random() * max);
     };
+    const saveScore = async () => {
+        try {
+            const response = await fetch('/api/scores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    score,
+                    questionsAnswered,
+                    maxDifficulty: difficulty,
+                    timeLeft
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to save score');
+            }
+        } catch (error) {
+            console.error('Error saving score:', error);
+        }
+    };
 
     const generateQuestion = (diff) => {
         const num1 = getRandomNumber(diff);
@@ -67,6 +89,7 @@ const MathQuiz = () => {
             return () => clearInterval(timer);
         } else if (timeLeft === 0) {
             setGameOver(true);
+            saveScore();  //Save score when game ends
         }
     }, [timeLeft, gameOver]);
 
