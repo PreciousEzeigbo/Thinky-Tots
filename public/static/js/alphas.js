@@ -13,9 +13,10 @@ let puzzle1Complete = false;
 let puzzle2Complete = false;
 let clickedUppercase = null;
 let score = 0;
-let timeLeft = 1200; // 20 minutes in seconds
+let timeLeft = 600;
 let timerId = null;
-let finalScore = 0;
+let finalScore = score;
+
 
 // Timer function
 function startTimer(duration) {
@@ -28,6 +29,7 @@ function startTimer(duration) {
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             disableInteractions();
+            saveScore();
             alert("Time is up! You didn't finish the game.");
         } else {
             timeLeft--;
@@ -78,10 +80,54 @@ function toQuit() {
 }
 
 
+// Function to fetch new alphabets for puzzle-1 and puzzle-2 from backend routes
+async function nextRound() {
+    try {
+        const response = await fetch('/alphas/new', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch new alphabets');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching new alphabets:', error);
+        return null;
+    }
+}
+
+// Puzzle 1: Function to update the boxes with new alphabets
+function displayNewAlphabets(uppercaseAlphabet, lowercaseAlphabet) {
+    const uppercaseBoxes = document.querySelectorAll("#uppercase-alphabets .box");
+    const lowercaseBoxes = document.querySelectorAll("#lowercase-alphabets .box");
+
+    // Update uppercase boxes
+    uppercaseBoxes.forEach((box, index) => {
+        box.textContent = uppercaseAlphabet[index];
+        box.style.backgroundColor = "";
+        box.style.pointerEvents = "auto";
+    });
+
+    // Update lowercase boxes
+    lowercaseBoxes.forEach((box, index) => {
+        box.textContent = lowercaseAlphabet[index];
+        box.style.backgroundColor = "";
+        box.style.pointerEvents = "auto";
+    });
+
+    // Reset clicked state
+    clickedUppercase = null;
+}
+
 // Puzzle 1: Uppercase and Lowercase Matching Logic
 function setupPuzzle1() {
     const uppercaseBoxes = document.querySelectorAll("#uppercase-alphabets .box");
     const lowercaseBoxes = document.querySelectorAll("#lowercase-alphabets .box");
+    let roundsCompleted = 0;
+    const rounds = 3;
 
     uppercaseBoxes.forEach(uppercaseBox => {
         uppercaseBox.addEventListener("click", function () {
@@ -93,7 +139,7 @@ function setupPuzzle1() {
     });
 
     lowercaseBoxes.forEach(lowercaseBox => {
-        lowercaseBox.addEventListener("click", function () {
+        lowercaseBox.addEventListener("click", async function () {
             if (clickedUppercase === null) return;
 
             const uppercaseAlphabets = clickedUppercase.textContent;
@@ -106,32 +152,77 @@ function setupPuzzle1() {
                 lowercaseBox.style.pointerEvents = "none";
                 clickedUppercase = null;
 
-                // Correct match to add 2 points
                 score += 2;
                 updateScore();
+
+                // Check if all pairs are matched
+                if ([...uppercaseBoxes].every(box => box.style.backgroundColor === "green") &&
+                    [...lowercaseBoxes].every(box => box.style.backgroundColor === "green")) {
+                    
+                    roundsCompleted++;
+                    
+                    if (roundsCompleted < rounds) {
+                        // Fetch and display new alphabets
+                        const newAlphabets = await nextRound();
+                        if (newAlphabets) {
+                            setTimeout(() => {
+                                displayNewAlphabets(
+                                    newAlphabets.uppercase_alphabet,
+                                    newAlphabets.lowercase_alphabet
+                                );
+                                shuffleLowercase();
+                            }, 1000);
+                        }
+                    } else {
+                        // Complete puzzle 1 and move to puzzle 2
+                        puzzle1Complete = true;
+                        setTimeout(() => switchToPuzzle2(), 1000);
+                    }
+                }
             } else {
                 lowercaseBox.style.backgroundColor = "red";
+                clickedUppercase.style.backgroundColor = "red";
+
+                uppercaseBoxes.forEach(box => box.style.pointerEvents = "none");
+                lowercaseBoxes.forEach(box => box.style.pointerEvents = "none");
+                
                 setTimeout(function () {
                     lowercaseBox.style.backgroundColor = "";
                     clickedUppercase.style.backgroundColor = "";
                     clickedUppercase = null;
-                }, 2000);
 
-                // Incorrect match to deduct 2 points
+                    uppercaseBoxes.forEach(box => box.style.pointerEvents = "auto");
+                    lowercaseBoxes.forEach(box => box.style.pointerEvents = "auto");
+                }, 1000);
+
                 score -= 2;
                 updateScore();
             }
-
-            // Check if all pairs are correct
-            if ([...uppercaseBoxes].every(box => box.style.backgroundColor === "green") &&
-                [...lowercaseBoxes].every(box => box.style.backgroundColor === "green")) {
-                puzzle1Complete = true;
-                setTimeout(() => switchToPuzzle2(), 1000);
-            }
         });
     });
-};
+}
 
+
+// Puzzle 2: Function to display new alphabets for puzzle 2 next round
+function nextRoundPuzzle2(newAlphabets) {
+    const alphabetsDisplayed = document.getElementById("alphabets-displayed");
+    const alphabetsOrder = document.getElementById("alphabets-order");
+    const displayedBoxes = Array.from(alphabetsDisplayed.getElementsByClassName("box"));
+    const orderBoxes = Array.from(alphabetsOrder.getElementsByClassName("box"));
+
+    // Reset displayed alphabets
+    displayedBoxes.forEach((box, index) => {
+        box.textContent = newAlphabets[index];
+        box.style.backgroundColor = "";
+        box.style.pointerEvents = "auto";
+    });
+
+    // Reset order boxes
+    orderBoxes.forEach(box => {
+        box.textContent = "";
+        box.style.backgroundColor = "";
+    });
+}
 
 // Puzzle 2: Alphabetical Ordering
 function setupPuzzle2() {
@@ -140,15 +231,25 @@ function setupPuzzle2() {
     const displayedBoxes = Array.from(alphabetsDisplayed.getElementsByClassName("box"));
     const orderBoxes = Array.from(alphabetsOrder.getElementsByClassName("box"));
 
-    const shownAlphabets = displayedBoxes.map(box => box.textContent);
-    const correctOrder = [...shownAlphabets].sort();
-
+    let roundsCompleted = 0;
+    const rounds = 3;
     let selectedIndex = 0;
 
+    function resetRound() {
+        selectedIndex = 0;
+    }
+
+    function updatePuzzle2(shownAlphabets) {
+        const correctOrder = [...shownAlphabets].sort();
+        return correctOrder;
+    }
+
     displayedBoxes.forEach(renderedAlphabets => {
-        renderedAlphabets.addEventListener("click", function () {
+        renderedAlphabets.addEventListener("click", async function () {
             if (renderedAlphabets.style.pointerEvents === "none") return;
 
+            const shownAlphabets = displayedBoxes.map(box => box.textContent);
+            const correctOrder = updatePuzzle2(shownAlphabets);
             const alphabet = renderedAlphabets.textContent;
 
             if (alphabet === correctOrder[selectedIndex]) {
@@ -159,9 +260,28 @@ function setupPuzzle2() {
                 renderedAlphabets.style.backgroundColor = "lightgreen";
                 selectedIndex++;
 
-                // Correct match to add 5 points
                 score += 5;
                 updateScore();
+
+                // Check if current round is complete
+                if ([...orderBoxes].every(box => box.textContent !== "")) {
+                    roundsCompleted++;
+                    
+                    if (roundsCompleted < rounds) {
+                        // Fetch and display new alphabets for next round
+                        const newAlphabets = await nextRound();
+                        if (newAlphabets) {
+                            setTimeout(() => {
+                                nextRoundPuzzle2(newAlphabets.alphabet_displayed);
+                                resetRound();
+                            }, 1000);
+                        }
+                    } else {
+                        // Complete puzzle 2 and move to puzzle 3
+                        puzzle2Complete = true;
+                        setTimeout(() => switchToPuzzle3(), 1000);
+                    }
+                }
             } else {
                 const correspondingOrderBox = document.getElementById("box-" + (selectedIndex + 1));
                 correspondingOrderBox.textContent = "🙅‍♂️";
@@ -177,16 +297,10 @@ function setupPuzzle2() {
 
                     renderedAlphabets.style.pointerEvents = "auto";
                     displayedBoxes.forEach(box => box.style.pointerEvents = "auto");
-                }, 2000);
+                }, 1000);
 
-                // Incorrect match to deduct 3 points
                 score -= 3;
                 updateScore();
-            }
-
-            if ([...orderBoxes].every(box => box.textContent !== "")) {
-                puzzle2Complete = true;
-                setTimeout(() => switchToPuzzle3(), 1000);
             }
         });
     });
@@ -237,7 +351,7 @@ function setupPuzzle3() {
 
                     renderedAlphas.style.pointerEvents = "auto";
                     displayedItems.forEach(box => box.style.pointerEvents = "auto");
-                }, 1500);
+                }, 1000);
 
                 // Incorrect match to deduct 4 points
                 score -= 4;
@@ -305,7 +419,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("uppercase-alphabets").style.display = "flex";
         document.getElementById("time").style.display = "flex";
         document.getElementById("time").style.justifyContent = "center";
-        startTimer(1200);
+        startTimer(600);
     });
 
     // Show rules and start the game when the start button is clicked
@@ -327,23 +441,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Event listener for quit button
     quitButton.addEventListener("click", toQuit);
 });
-function updateTimer() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    document.getElementById('time').textContent = 
-        `${minutes}:${seconds.toString().padStart(2, '0')}`;
-}
 
-function startTimer() {
-    timerId = setInterval(() => {
-        timeLeft--;
-        updateTimer();
-        if (timeLeft <= 0) {
-            clearInterval(timerId);
-            saveScore();
-        }
-    }, 1000);
-}
 
 async function saveScore() {
     try {
@@ -354,7 +452,7 @@ async function saveScore() {
             },
             body: JSON.stringify({
                 score: finalScore,
-                timeTaken: 1200 - timeLeft // Calculate time taken
+                timeTaken: 600 - timeLeft
             })
         });
 
@@ -368,7 +466,7 @@ async function saveScore() {
         // Show congratulations message and final score
         document.getElementById('congratulations').style.display = 'block';
         document.getElementById('overall-score').style.display = 'block';
-        document.getElementById('overall-score').textContent = `Final Score: ${finalScore}`;
+        document.getElementById('overall-score').textContent = `Final Score: ${score}`;
         document.getElementById('redirect').style.display = 'flex';
         
     } catch (error) {
