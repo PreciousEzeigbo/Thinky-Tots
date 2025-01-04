@@ -19,6 +19,7 @@ class User(db.Model, UserMixin):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     quiz_scores = relationship('QuizScore', back_populates='user')
+    alpha_scores = relationship('AlphaScore', back_populates='user')
 
     def __repr__(self):
         return f'<User: {self.username}>' # Return the username for easy identification in logs
@@ -54,6 +55,25 @@ class QuizScore(db.Model):
             'score': self.score,
             'questions_answered': self.questions_answered,
             'max_difficulty': self.max_difficulty,
+            'time_taken': self.time_taken,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+
+# In models.py
+class AlphaScore(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.uid'), nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    time_taken = db.Column(db.Integer, nullable=False)  # in seconds
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    user = db.relationship('User', back_populates='alpha_scores')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.user.username,
+            'score': self.score,
             'time_taken': self.time_taken,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }

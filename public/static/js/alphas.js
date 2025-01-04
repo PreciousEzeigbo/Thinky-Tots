@@ -13,6 +13,9 @@ let puzzle1Complete = false;
 let puzzle2Complete = false;
 let clickedUppercase = null;
 let score = 0;
+let timeLeft = 1200; // 20 minutes in seconds
+let timerId = null;
+let finalScore = 0;
 
 // Timer function
 function startTimer(duration) {
@@ -324,3 +327,63 @@ document.addEventListener("DOMContentLoaded", function () {
     // Event listener for quit button
     quitButton.addEventListener("click", toQuit);
 });
+function updateTimer() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('time').textContent = 
+        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function startTimer() {
+    timerId = setInterval(() => {
+        timeLeft--;
+        updateTimer();
+        if (timeLeft <= 0) {
+            clearInterval(timerId);
+            saveScore();
+        }
+    }, 1000);
+}
+
+async function saveScore() {
+    try {
+        const response = await fetch('/api/alpha-scores', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                score: finalScore,
+                timeTaken: 1200 - timeLeft // Calculate time taken
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to save score');
+        }
+
+        const data = await response.json();
+        console.log('Score saved successfully:', data);
+        
+        // Show congratulations message and final score
+        document.getElementById('congratulations').style.display = 'block';
+        document.getElementById('overall-score').style.display = 'block';
+        document.getElementById('overall-score').textContent = `Final Score: ${finalScore}`;
+        document.getElementById('redirect').style.display = 'flex';
+        
+    } catch (error) {
+        console.error('Error saving score:', error);
+    }
+}
+
+// Modify your quit button click handler
+document.getElementById('quitButton').addEventListener('click', () => {
+    clearInterval(timerId);
+    saveScore();
+});
+
+// Add this to your existing puzzle completion logic
+function onPuzzleComplete() {
+    clearInterval(timerId);
+    saveScore();
+}

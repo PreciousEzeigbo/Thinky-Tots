@@ -2,7 +2,7 @@ from flask import Blueprint, Flask, render_template, jsonify, request, redirect,
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager
 from werkzeug.security import check_password_hash
 
-from public.models import User, db,  QuizScore
+from public.models import User, db,  QuizScore, AlphaScore
 
 import random
 
@@ -193,6 +193,13 @@ def register_routes(app, db, bcrypt):
         """Math Quiz route"""
         return render_template("mathquiz.html")
     
+    @public_bp.route('/main_scores')
+    @login_required
+    def main_scores():
+        '''Scores page for both Alpha and Mathquiz'''
+        return render_template("main_scores.html")
+    
+
     @public_bp.route('/api/scores', methods=['POST'])
     @login_required
     def save_score():
@@ -250,7 +257,64 @@ def register_routes(app, db, bcrypt):
     @public_bp.route('/scores')
     @login_required
     def scores():
-        return render_template('scores.html')
+        return render_template('mathscores.html')
+    
+    @public_bp.route('/api/alpha-scores', methods=['POST'])
+    @login_required
+    def save_alpha_score():
+        data = request.json
+        
+        new_score = AlphaScore(
+            user_id=current_user.uid,
+            score=data['score'],
+            time_taken=data['timeTaken']
+        )
+        
+        db.session.add(new_score)
+        db.session.commit()
+        
+        return jsonify({'message': 'Score saved successfully'})
+
+    @public_bp.route('/api/alpha-scores/personal', methods=['GET'])
+    @login_required
+    def get_personal_alpha_scores():
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        
+        scores = AlphaScore.query\
+            .filter_by(user_id=current_user.uid)\
+            .order_by(
+                AlphaScore.score.desc(), 
+                AlphaScore.created_at.desc()
+            ).paginate(page=page, per_page=per_page)
+        
+        return jsonify({
+            'scores': [score.to_dict() for score in scores.items],
+            'total_pages': scores.pages,
+            'current_page': scores.page
+        })
+
+    @public_bp.route('/api/alpha-scores/leaderboard', methods=['GET'])
+    def get_alpha_leaderboard():
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        
+        scores = AlphaScore.query\
+            .order_by(
+                AlphaScore.score.desc(), 
+                AlphaScore.created_at.desc()
+            ).paginate(page=page, per_page=per_page)
+        
+        return jsonify({
+            'scores': [score.to_dict() for score in scores.items],
+            'total_pages': scores.pages,
+            'current_page': scores.page
+    })
+
+    @public_bp.route('/alpha_scores')
+    @login_required
+    def alpha_scores():
+        return render_template('alpha_scores.html')
 
     # Custom error pages
 
