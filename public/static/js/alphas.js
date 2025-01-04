@@ -31,11 +31,13 @@ function startTimer(duration) {
             disableInteractions();
             saveScore();
             alert("Time is up! You didn't finish the game.");
+            displayFinalScore();
         } else {
             timeLeft--;
         }
     }, 1000);
 }
+
 
 // Function to shuffle lowercase letters for puzzle 1
 function shuffleLowercase() {
@@ -386,13 +388,25 @@ function switchToPuzzle3() {
 
 // Function to switch to Puzzle 3 after Puzzle 2 is completed
 function displayFinalScore() {
+    // Do not display timer, quit button and score
+    document.getElementById("time").style.display = "none";
+    document.getElementById("quitButton").style.display = "none";
+    document.getElementById("score").style.display = "none";
+    // Do not display anything related to puzzle-3
     document.getElementById("puzzle-3").style.display = "none";
     document.getElementById("alphas-order").style.display = "none";
     document.getElementById("alphas-displayed").style.display = "none";
     document.getElementById("rules-3").style.display = "none";
-    document.getElementById("time").style.display = "none";
-    document.getElementById("quitButton").style.display = "none";
-    document.getElementById("score").style.display = "none";
+    // Do not display anything related to puzzle-1
+    document.getElementById("puzzle-1").style.display = "none";
+    document.getElementById("lowercase-alphabets").style.display = "none";
+    document.getElementById("uppercase-alphabets").style.display = "none";
+    // Do not display anything related to puzzle-2
+    document.getElementById("puzzle-2").style.display = "none";
+    document.getElementById("alphabets-order").style.display = "none";
+    document.getElementById("alphabets-displayed").style.display = "none";
+    document.getElementById("rules-2").style.display = "none";
+    // Display congratulations and score
     document.getElementById("congratulations").style.display = "flex";
     document.getElementById("redirect").style.display = "flex";
     
@@ -466,7 +480,7 @@ async function saveScore() {
         // Show congratulations message and final score
         document.getElementById('congratulations').style.display = 'block';
         document.getElementById('overall-score').style.display = 'block';
-        document.getElementById('overall-score').textContent = `Final Score: ${score}`;
+        document.getElementById('overall-score').textContent = `Final Score: ${finalScore}`;
         document.getElementById('redirect').style.display = 'flex';
         
     } catch (error) {

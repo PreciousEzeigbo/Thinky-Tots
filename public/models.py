@@ -21,17 +21,21 @@ class User(db.Model, UserMixin):
     quiz_scores = relationship('QuizScore', back_populates='user')
     alpha_scores = relationship('AlphaScore', back_populates='user')
 
+    # Return the username for easy identification in logs
     def __repr__(self):
-        return f'<User: {self.username}>' # Return the username for easy identification in logs
+        return f'<User: {self.username}>'
 
+    # Return the unique user ID (required by Flask-Login)
     def get_id(self):
-        return self.uid # Return the unique user ID (required by Flask-Login)
+        return self.uid
 
+    # Use Werkzeug to hash the password before saving
     def set_password(self, password):
-        self.password = generate_password_hash(password) # Use Werkzeug to hash the password before saving
+        self.password = generate_password_hash(password)
 
+    # Compare the hashed password with the entered password
     def check_password(self, password):
-        return check_password_hash(self.password, password) # Compare the hashed password with the entered password
+        return check_password_hash(self.password, password)
     
     @property
     def id(self):
@@ -43,7 +47,7 @@ class QuizScore(db.Model):
     score = db.Column(db.Integer, nullable=False)
     questions_answered = db.Column(db.Integer, nullable=False)
     max_difficulty = db.Column(db.Integer, nullable=False)
-    time_taken = db.Column(db.Integer, nullable=False)  # in seconds
+    time_taken = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     user = db.relationship('User', back_populates='quiz_scores')
@@ -64,7 +68,7 @@ class AlphaScore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.uid'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
-    time_taken = db.Column(db.Integer, nullable=False)  # in seconds
+    time_taken = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     user = db.relationship('User', back_populates='alpha_scores')
