@@ -199,7 +199,7 @@ def register_routes(app, db, bcrypt):
         data = request.json
         
         new_score = QuizScore(
-            user_id=current_user.id,
+            user_id=current_user.uid,
             score=data['score'],
             questions_answered=data['questionsAnswered'],
             max_difficulty=data['maxDifficulty'],
@@ -217,10 +217,12 @@ def register_routes(app, db, bcrypt):
         page = request.args.get('page', 1, type=int)
         per_page = 10
         
-        scores = QuizScore.query.filter_by(user_id=current_user.id).order_by(
-            QuizScore.score.desc(), 
-            QuizScore.created_at.desc()
-        ).paginate(page=page, per_page=per_page)
+        scores = QuizScore.query\
+            .filter_by(user_id=current_user.uid)\
+            .order_by(
+                QuizScore.score.desc(), 
+                QuizScore.created_at.desc()
+            ).paginate(page=page, per_page=per_page)
         
         return jsonify({
             'scores': [score.to_dict() for score in scores.items],
@@ -233,10 +235,11 @@ def register_routes(app, db, bcrypt):
         page = request.args.get('page', 1, type=int)
         per_page = 10
         
-        scores = QuizScore.query.order_by(
-            QuizScore.score.desc(), 
-            QuizScore.created_at.desc()
-        ).paginate(page=page, per_page=per_page)
+        scores = QuizScore.query\
+            .order_by(
+                QuizScore.score.desc(), 
+                QuizScore.created_at.desc()
+            ).paginate(page=page, per_page=per_page)
         
         return jsonify({
             'scores': [score.to_dict() for score in scores.items],
@@ -248,7 +251,6 @@ def register_routes(app, db, bcrypt):
     @login_required
     def scores():
         return render_template('scores.html')
-
 
     # Custom error pages
 
