@@ -3,26 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Page title for the login page -->
     <title>Login Page</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Link to the external stylesheet for login page design -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
     <header>
-            <div class="thinkytots">
-                <img src="{{ url_for('static', filename='images/thinkytots.jpg') }}" alt="thinkytots-image" class="thinkytots-logo">
-            </div>
+        <!-- Header section with the logo -->
+        <div class="thinkytots">
+            <img src="{{ url_for('static', filename='images/thinkytots.jpg') }}" alt="thinkytots-image" class="thinkytots-logo">
+        </div>
     </header>
+    <!-- Main container for the login page content -->
     <div class="page-container">
         <div class="image-container">
             <img src="{{ url_for('static', filename='images/book2.png') }}" alt="books-image" class="books-image">
         </div>
-
+        <!-- Form container for the login page -->
         <div class="container">    
             <div class="header">
                 <h2>Login</h2>
             </div>
+            <!-- Login form with POST method to send data to the server -->
             <form class="form" id="form" action="{{ url_for('public.login') }}" method="POST">
+                <!-- Form field for email or username input -->
                 <div class="form-control">
                     <label>Email/Username</label>
                     <input type="email/username" placeholder="email/username" id="userIdentifier" name="userIdentifier">
@@ -30,7 +36,7 @@
                     <i class="fa-solid fa-exclamation-circle"></i>
                     <small>Error message</small>
                 </div>
-    
+                <!-- Form field for password input -->
                 <div class="form-control">
                     <label>Password</label>
                     <input type="password" placeholder="Password" id="password" name="password">
@@ -39,20 +45,22 @@
                     <i class="fa-solid fa-eye-slash" id="toggle-password"></i>
                     <small>Error message</small>
                 </div>
-
+                <!-- Submit button for the login form -->
                 <button>Login</button>
             </form>
+            <!-- Link to reset forgotten password -->
             <div class="forgot-password">
                 <a href="/forgotten-password.html">Forgotten Password</a>
             </div>
-            <!-- Text and link for users who already have an account -->
+            <!-- Text and link for users who don't have an account -->
             <div class="register">
                 <label>Don't have an account?</label>
+                <!-- Link to the registration page -->
                 <a href="{{ url_for('public.register') }}" id="Register">Register Here</a>
             </div>
         </div>
     </div>
-    
+    <!-- Link to external JavaScript for login page functionality -->
     <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 </body>
 </html>
