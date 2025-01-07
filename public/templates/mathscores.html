@@ -188,8 +188,7 @@
             switchView(view) {
                 this.currentView = view;
                 this.currentPage = 1;
-                
-                // Update active tab
+
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.classList.toggle('active', tab.dataset.view === view);
                 });

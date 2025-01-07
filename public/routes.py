@@ -1,6 +1,7 @@
 from flask import Blueprint, Flask, render_template, jsonify, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager
 from werkzeug.security import check_password_hash
+from sqlalchemy import desc
 
 from public.models import User, db,  QuizScore, AlphaScore
 
@@ -152,76 +153,7 @@ def register_routes(app, db, bcrypt):
     @login_required
     def alphas():
         """ Alphabets Puzzle """
-        # Define the list of uppercase and lowercase letters
-        uppercase_alphabet = [chr(i) for i in range(65, 91)]
-        lowercase_alphabet = [chr(i) for i in range(97, 123)]
-
-        # Pair uppercase and lowercase letters together
-        letter_pairs = list(zip(uppercase_alphabet, lowercase_alphabet))
-
-        # Shuffle the letter pairs randomly
-        random.shuffle(letter_pairs)
-
-        # Get the first 8 pairs to display
-        selected_pairs = letter_pairs[:8]
-
-        # Separate the pairs back into two lists
-        uppercase_alphabet_shuffled = [pair[0] for pair in selected_pairs]
-        lowercase_alphabet_shuffled = [pair[1] for pair in selected_pairs]
-
-        # Define the list of alphabets displayed for puzzle 2
-        alphabet_displayed = [chr(i) for i in range(97, 123)]
-
-        # For Puzzle 2: Shuffle lowercase alphabet to be arranged
-        alphabet_displayed_randomized = random.sample(alphabet_displayed, 8)
-
-        # Define the list of alphabets displayed for puzzle 2
-        alpha_displayed = [chr(i) for i in range(65, 91)]
-
-        # For Puzzle 2: Shuffle lowercase alphabet to be arranged
-        alpha_displayed_randomized = random.sample(alpha_displayed, 26)
-        
-        return render_template("alphas.html", 
-                               uppercase_alphabet=uppercase_alphabet_shuffled, 
-                               lowercase_alphabet=lowercase_alphabet_shuffled,
-                               alphabet_displayed=alphabet_displayed_randomized,
-                               alpha_displayed=alpha_displayed_randomized)
-    
-
-    @public_bp.route('/alphas/new')
-    @login_required
-    def new_alphas():
-        """Generate new set of alphabets for the next round"""
-        # Define the list of uppercase and lowercase letters
-        uppercase_alphabet = [chr(i) for i in range(65, 91)]
-        lowercase_alphabet = [chr(i) for i in range(97, 123)]
-
-        # Pair uppercase and lowercase letters together
-        letter_pairs = list(zip(uppercase_alphabet, lowercase_alphabet))
-
-        # Shuffle the letter pairs randomly
-        random.shuffle(letter_pairs)
-
-        # Get the first 8 pairs to display
-        selected_pairs = letter_pairs[:8]
-
-        # Separate the pairs back into two lists
-        uppercase_alphabet_shuffled = [pair[0] for pair in selected_pairs]
-        lowercase_alphabet_shuffled = [pair[1] for pair in selected_pairs]
-
-        # Define the list of alphabets displayed for puzzle 2
-        alphabet_displayed = [chr(i) for i in range(97, 123)]
-
-        # For Puzzle 2: Shuffle lowercase alphabet to be arranged
-        alphabet_displayed_randomized = random.sample(alphabet_displayed, 8)
-
-        # Return as json to client side
-        return jsonify({
-            'uppercase_alphabet': uppercase_alphabet_shuffled,
-            'lowercase_alphabet': lowercase_alphabet_shuffled,
-            'alphabet_displayed': alphabet_displayed_randomized
-        })
-    
+        return render_template("alphas.html")
 
     @public_bp.route('/mathquiz')
     @login_required
@@ -295,7 +227,7 @@ def register_routes(app, db, bcrypt):
     def scores():
         return render_template('mathscores.html')
     
-    @public_bp.route('/api/alpha-scores', methods=['POST'])
+    @public_bp.route('/api/alpha_scores', methods=['POST'])
     @login_required
     def save_alpha_score():
         data = request.json
@@ -311,7 +243,7 @@ def register_routes(app, db, bcrypt):
         
         return jsonify({'message': 'Score saved successfully'})
 
-    @public_bp.route('/api/alpha-scores/personal', methods=['GET'])
+    @public_bp.route('/api/alpha_scores/personal', methods=['GET'])
     @login_required
     def get_personal_alpha_scores():
         page = request.args.get('page', 1, type=int)
@@ -330,7 +262,7 @@ def register_routes(app, db, bcrypt):
             'current_page': scores.page
         })
 
-    @public_bp.route('/api/alpha-scores/leaderboard', methods=['GET'])
+    @public_bp.route('/api/alpha_scores/leaderboard', methods=['GET'])
     def get_alpha_leaderboard():
         page = request.args.get('page', 1, type=int)
         per_page = 10
