@@ -1,4 +1,6 @@
+// MathQuiz Component Definition
 const MathQuiz = () => {
+    // Declaring variables that store the state of the game
     const [currentQuestion, setCurrentQuestion] = React.useState(null);
     const [userAnswer, setUserAnswer] = React.useState('');
     const [score, setScore] = React.useState(0);
@@ -9,25 +11,30 @@ const MathQuiz = () => {
     const [questionsAnswered, setQuestionsAnswered] = React.useState(0);
     const [showExitConfirm, setShowExitConfirm] = React.useState(false);
 
+    // Function to handle when the user wants to exit the quiz
     const handleExit = () => {
+        // Show confirmation if the user has made progress i.e score > 0 or answered questions
         if (score > 0 || questionsAnswered > 0) {
             setShowExitConfirm(true);
         } else {
+            // If no progress has been made, exit directly to dashboard page
             window.location.href = HOME_URL;
         }
     };
-
+    // If the user confirms the exit, they are taken to the dashboard page
     const confirmExit = () => {
         window.location.href = HOME_URL;
     };
 
-    // Rest of the component code remains the same until the end...
+    // Generates a random number based on the difficulty level
     const getRandomNumber = (difficulty) => {
         const max = Math.pow(10, difficulty);
         return Math.floor(Math.random() * max);
     };
+    // Save user's score after the game ends
     const saveScore = async () => {
         try {
+            // Sends the score data to the server using a POST request
             const response = await fetch('/api/scores', {
                 method: 'POST',
                 headers: {
@@ -41,6 +48,7 @@ const MathQuiz = () => {
                 })
             });
             
+            // Handles error if the request was unsuccessful
             if (!response.ok) {
                 throw new Error('Failed to save score');
             }
@@ -49,12 +57,14 @@ const MathQuiz = () => {
         }
     };
 
+    // Generates a random math question based on the difficulty level
     const generateQuestion = (diff) => {
         const num1 = getRandomNumber(diff);
         const num2 = getRandomNumber(diff);
         const operations = ['+', '-', '×', '÷'];
         let operation = operations[Math.floor(Math.random() * operations.length)];
         
+        // Special handling for division to ensure whole number results
         if (operation === '÷') {
             const product = num1 * num2;
             return {
@@ -64,6 +74,7 @@ const MathQuiz = () => {
         }
         
         let answer;
+        // Based on the operation, calculate the correct answer
         switch (operation) {
             case '+': answer = num1 + num2; break;
             case '-': answer = num1 - num2; break;
@@ -77,10 +88,12 @@ const MathQuiz = () => {
         };
     };
 
+    // useEffect to generate a new question whenever the difficulty changes
     React.useEffect(() => {
         setCurrentQuestion(generateQuestion(difficulty));
     }, [difficulty]);
 
+    // Timer to decrease time left every second and check if the game is over
     React.useEffect(() => {
         if (timeLeft > 0 && !gameOver) {
             const timer = setInterval(() => {
@@ -93,9 +106,11 @@ const MathQuiz = () => {
         }
     }, [timeLeft, gameOver]);
 
+    // Handles the submission of the user's answer
     const handleSubmit = (e) => {
         e.preventDefault();
         
+        // Checks if the answer is correct
         const isCorrect = parseInt(userAnswer) === currentQuestion.answer;
         
         if (isCorrect) {
@@ -106,6 +121,7 @@ const MathQuiz = () => {
                 message: 'Correct! Well done!'
             });
             
+            // Increases difficulty after every 3 correct answers
             if (questionsAnswered > 0 && (questionsAnswered + 1) % 3 === 0) {
                 setDifficulty(prev => Math.min(prev + 1, 4));
             }
@@ -116,18 +132,22 @@ const MathQuiz = () => {
             });
         }
         
+        // Generate a new question after answering
         setCurrentQuestion(generateQuestion(difficulty));
         setUserAnswer('');
         
+        // Clears feedback after 2 seconds
         setTimeout(() => setFeedback(null), 2000);
     };
 
+    // Format the time left
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
+    // Confirmation modal when the user tries to exit the quiz
     const ExitConfirmationModal = () => (
         <div className="modal-backdrop">
             <div className="modal-content">
@@ -151,6 +171,7 @@ const MathQuiz = () => {
         </div>
     );
 
+    // Game over screen with options to show final score and options to replay or exit
     const GameOverScreen = () => (
         <div className="text-center space-y-4">
             <h2 className="text-2xl font-bold">Game Over!</h2>
@@ -248,4 +269,5 @@ const MathQuiz = () => {
     );
 };
 
+// Render the MathQuiz component into the HTML element with the id mathQuizRoot
 ReactDOM.render(<MathQuiz />, document.getElementById('mathQuizRoot'));
