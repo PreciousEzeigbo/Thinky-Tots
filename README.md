@@ -26,7 +26,6 @@ Thinky-Tots helps users:
 
 THINKY TOTS came to be after realizing that there are ways to engage kids positivily and digitally in this times, it was created to be interactive educational web site designed to make learning fun and engaging for young children. Through playful puzzles, kids can explore the foundations of language and math while fostering creativity, critical thinking, and problem-solving skills. Our mission is to provide a safe, enjoyable, and enriching environment where children can learn, play, and grow.
 
-Also, if you've ever found yourself wondering whether walking from the fridge to the couch counts as cardio – you’re in the right place.
 
 ## Key Features
 
@@ -116,4 +115,4 @@ Feel free to reach out if you have questions, suggestions, or just want to chat 
 ## css
 
 
-Feel free to tweak it further, but this version includes all the details for setting up the app, its backstory, and some jokes to keep things lighthearted!
+Feel free to tweak it further, but this version includes all the details for setting up the app and its backstory
