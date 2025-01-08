@@ -17,7 +17,7 @@
 .timer {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: #3b82f6;
+    color: #091a3a;
 }
 
 .question {
@@ -43,8 +43,8 @@
 }
 
 .option-button:hover {
-    border-color: #3b82f6;
-    color: #3b82f6;
+    border-color: #091a3a;
+    color: #091a3a;
 }
 
 .score {
@@ -64,12 +64,12 @@
 }
 
 .start-button {
-    background-color: #3b82f6;
+    background-color: #091a3a;
     color: white;
 }
 
 .start-button:hover {
-    background-color: #2563eb;
+    background-color: #091a3a;
 }
 
 .exit-button {

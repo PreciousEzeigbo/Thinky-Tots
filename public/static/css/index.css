@@ -1,18 +1,21 @@
+/* Resetting default margin, padding and setting box-sizing to border-box for all elements */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Defining custom properties (CSS variables) for consistent color scheme */
 :root {
-    --primary-color: #3e74e9;
-    --secondary-color: #2196F3;
+    --primary-color: #091a3a;
+    --secondary-color: #173b7e;
     --text-color: #333;
     --bg-color: #f5f5f5;
     --white: #ffffff;
     --black: black;
 }
 
+/* Body styling */
 body {
     font-family: 'Roboto', sans-serif;
     line-height: 1.6;
@@ -20,6 +23,7 @@ body {
     background-color: var(--bg-color);
 }
 
+/* Link styling */
 a {
     text-decoration: none;
     color: var(--primary-color);
@@ -31,7 +35,7 @@ header {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: fixed;
     width: 100%;
-    z-index: 10;
+    z-index: 1000;
     transition: background-color 0.3s ease;
 }
 
@@ -57,16 +61,9 @@ nav {
 
 
 .logo-image {
-    width: 50px;
+    width: 170px;
     height: auto;
     margin-right: 10px;
-}
-
-.logo-text {
-    font-family: 'Comic Sans MS', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
 }
 
 nav ul {
@@ -104,7 +101,7 @@ nav ul li a:hover {
 
 /* Main content */
 main {
-    padding-top: 60px;
+    padding-top: 100px;
 }
 
 section {
@@ -119,7 +116,7 @@ h1, h2, h3 {
 
 /* Hero section */
 #hero {
-    background-image: linear-gradient(to right, #e0f2ff, #90caf9, #2196f3);
+    background-image: linear-gradient(to right, #e0f2ff, #20417e, #091a3a);
     color: var(--white);
     text-align: center;
     padding: 6rem 5%;
@@ -175,10 +172,10 @@ h1, h2, h3 {
     background-repeat: no-repeat;
     border-radius: 10px;
     padding: 2rem;
-    color: white; /* To contrast with background images */
+    color: white;
     transition: all 0.3s ease;
     position: relative;
-    min-height: 300px; /* Ensures enough space for image and text */
+    min-height: 300px;
 }
 
 /* Different background images for each card */
@@ -195,7 +192,7 @@ h1, h2, h3 {
 }
 
 .feature-card h3, .feature-card p {
-    position: relative; /* Ensures text stays visible on top of the background */
+    position: relative;
     z-index: 2;
 }
 
@@ -206,7 +203,7 @@ h1, h2, h3 {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.4); /*dark overlay to enhance text readability */
+    background-color: rgba(0, 0, 0, 0.4);
     z-index: 1;
 }
 
