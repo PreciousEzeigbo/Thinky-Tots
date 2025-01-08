@@ -12,7 +12,10 @@ bcrypt = Bcrypt() # For password hashing
 
 # Function to create and configure the Flask app
 def create_app():
+    # Create a Flask app instance with custom template and static folder locations
     app = Flask(__name__, template_folder= 'templates', static_folder='static')
+
+    # App configuration settings
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = "my secret key you should not know"
@@ -22,7 +25,7 @@ def create_app():
     db.init_app(app)
     bcrypt.init_app(app)
 
-    # login manager set up
+    # Login manager set up
     login_manager.init_app(app)
 
     # Configure login messages and redirect for login

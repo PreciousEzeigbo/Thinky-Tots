@@ -1,4 +1,4 @@
-# Import necessary modules for user management and password hashing
+# Import necessary modules for user management and password hashing, and database interaction
 from flask_login import UserMixin
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(120), nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Define relationships with QuizScore and AlphaScore models
     quiz_scores = relationship('QuizScore', back_populates='user')
     alpha_scores = relationship('AlphaScore', back_populates='user')
 
@@ -42,6 +43,7 @@ class User(db.Model, UserMixin):
         return self.uid
     
 class QuizScore(db.Model):
+    """Model for storing quiz scores of users."""
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.uid'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
@@ -50,8 +52,10 @@ class QuizScore(db.Model):
     time_taken = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
+    # Define the relationship with the User model
     user = db.relationship('User', back_populates='quiz_scores')
 
+    # Convert the QuizScore object into a dictionary for easy representation
     def to_dict(self):
         return {
             'id': self.id,
@@ -63,16 +67,19 @@ class QuizScore(db.Model):
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
 
-# In models.py
+# Model for storing scores of the Alphabet puzzle
 class AlphaScore(db.Model):
+    """Model for storing scores of the Alphabet puzzle."""
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.uid'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
     time_taken = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
+    # Define the relationship with the User model
     user = db.relationship('User', back_populates='alpha_scores')
 
+    # Convert the AlphaScore object into a dictionary for easy representation
     def to_dict(self):
         return {
             'id': self.id,

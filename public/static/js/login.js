@@ -42,24 +42,28 @@ function checkInputs() {
     const userIdentifierValue = userIdentifier.value.trim();
     const passwordValue = password.value.trim();
 
+    // Use boolean to track the overall form validity
     let valid = true;
 
     // Email validation
     if (userIdentifierValue === '') {
+        // Show an error message if user-identifier is blank
         setErrorFor(userIdentifier, 'userIdentifier cannot be blank');
         valid = false;
     } else {
+        // If user-identifier is valid, show success
         setSuccessFor(userIdentifier);
     }
 
     // Password validation
     if (passwordValue === '') {
+        // Show an error message if password is blank
         setErrorFor(password, 'Password cannot be blank');
         valid = false;
     } else {
+        // If password is valid, show success
         setSuccessFor(password);
     }
-
     return valid;
 }
 
