@@ -1,501 +1,248 @@
-// DOM Elements
-const lowercaseDisplay = document.getElementById("lowercase-alphabets");
-const timer = document.getElementById("time");
-const scoreUpdate = document.getElementById("score");
-const startPuzzle1 = document.getElementById("startPuzzle1");
-const nextPuzzle2 = document.getElementById("nextPuzzle2");
-const nextPuzzle3 = document.getElementById("nextPuzzle3");
-const quitButton = document.getElementById("quitButton");
-
-// Variable
-let timerInterval;
-let puzzle1Complete = false;
-let puzzle2Complete = false;
-let clickedUppercase = null;
-let score = 0;
-let timeLeft = 600;
-let timerId = null;
-let finalScore = score;
-
-
-// Timer function
-function startTimer(duration) {
-    let timeLeft = duration;
-    timerInterval = setInterval(function () {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        timer.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            disableInteractions();
-            saveScore();
-            alert("Time is up! You didn't finish the game.");
-            displayFinalScore();
-        } else {
-            timeLeft--;
-        }
-    }, 1000);
-}
-
-
-// Function to shuffle lowercase letters for puzzle 1
-function shuffleLowercase() {
-    const boxes = Array.from(lowercaseDisplay.getElementsByClassName("box"));
-    for (let a = boxes.length - 1; a > 0; a--) {
-        const b = Math.floor(Math.random() * (a + 1));
-        [boxes[a], boxes[b]] = [boxes[b], boxes[a]];
-    }
-    boxes.forEach(box => lowercaseDisplay.appendChild(box));
-}
-
-// Function to disable all alphabet interactions
-function disableInteractions() {
-    const allBoxes = document.querySelectorAll(".box");
-    allBoxes.forEach(box => {
-        box.style.pointerEvents = "none";
-    });
-}
-
-// Function to Display score
-function updateScore() {
-    scoreUpdate.textContent = "Score: " + score;
-}
-
-// Function to quit puzzle
-function toQuit() {
-    // Ask user before quitting puzzle
-    const confirmQuit = confirm("Are you sure you want to quit the puzzle?");
-    if (confirmQuit) {
-        // Stop the timer
-        clearInterval(timerInterval);
-
-        // Disable all alphabet interactions
-        disableInteractions();
-
-        // Optionally, show a message to indicate the game is paused or quit
-        alert("You have quit the game. Your progress will be lost.");
-
-        // Redirect to home.html after quitting
-        window.location.href = "/home";
-    }
-}
-
-
-// Function to fetch new alphabets for puzzle-1 and puzzle-2 from backend routes
-async function nextRound() {
-    try {
-        const response = await fetch('/alphas/new', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Failed to fetch new alphabets');
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching new alphabets:', error);
-        return null;
-    }
-}
-
-// Puzzle 1: Function to update the boxes with new alphabets
-function displayNewAlphabets(uppercaseAlphabet, lowercaseAlphabet) {
-    const uppercaseBoxes = document.querySelectorAll("#uppercase-alphabets .box");
-    const lowercaseBoxes = document.querySelectorAll("#lowercase-alphabets .box");
-
-    // Update uppercase boxes
-    uppercaseBoxes.forEach((box, index) => {
-        box.textContent = uppercaseAlphabet[index];
-        box.style.backgroundColor = "";
-        box.style.pointerEvents = "auto";
-    });
-
-    // Update lowercase boxes
-    lowercaseBoxes.forEach((box, index) => {
-        box.textContent = lowercaseAlphabet[index];
-        box.style.backgroundColor = "";
-        box.style.pointerEvents = "auto";
-    });
-
-    // Reset clicked state
-    clickedUppercase = null;
-}
-
-// Puzzle 1: Uppercase and Lowercase Matching Logic
-function setupPuzzle1() {
-    const uppercaseBoxes = document.querySelectorAll("#uppercase-alphabets .box");
-    const lowercaseBoxes = document.querySelectorAll("#lowercase-alphabets .box");
-    let roundsCompleted = 0;
-    const rounds = 3;
-
-    uppercaseBoxes.forEach(uppercaseBox => {
-        uppercaseBox.addEventListener("click", function () {
-            if (clickedUppercase !== null) return;
-
-            uppercaseBox.style.backgroundColor = "yellow";
-            clickedUppercase = uppercaseBox;
-        });
-    });
-
-    lowercaseBoxes.forEach(lowercaseBox => {
-        lowercaseBox.addEventListener("click", async function () {
-            if (clickedUppercase === null) return;
-
-            const uppercaseAlphabets = clickedUppercase.textContent;
-            const lowercaseAlphabets = lowercaseBox.textContent;
-
-            if (uppercaseAlphabets.toLowerCase() === lowercaseAlphabets) {
-                lowercaseBox.style.backgroundColor = "green";
-                clickedUppercase.style.backgroundColor = "green";
-                clickedUppercase.style.pointerEvents = "none";
-                lowercaseBox.style.pointerEvents = "none";
-                clickedUppercase = null;
-
-                score += 2;
-                updateScore();
-
-                // Check if all pairs are matched
-                if ([...uppercaseBoxes].every(box => box.style.backgroundColor === "green") &&
-                    [...lowercaseBoxes].every(box => box.style.backgroundColor === "green")) {
-                    
-                    roundsCompleted++;
-                    
-                    if (roundsCompleted < rounds) {
-                        // Fetch and display new alphabets
-                        const newAlphabets = await nextRound();
-                        if (newAlphabets) {
-                            setTimeout(() => {
-                                displayNewAlphabets(
-                                    newAlphabets.uppercase_alphabet,
-                                    newAlphabets.lowercase_alphabet
-                                );
-                                shuffleLowercase();
-                            }, 1000);
-                        }
-                    } else {
-                        // Complete puzzle 1 and move to puzzle 2
-                        puzzle1Complete = true;
-                        setTimeout(() => switchToPuzzle2(), 1000);
-                    }
-                }
-            } else {
-                lowercaseBox.style.backgroundColor = "red";
-                clickedUppercase.style.backgroundColor = "red";
-
-                uppercaseBoxes.forEach(box => box.style.pointerEvents = "none");
-                lowercaseBoxes.forEach(box => box.style.pointerEvents = "none");
-                
-                setTimeout(function () {
-                    lowercaseBox.style.backgroundColor = "";
-                    clickedUppercase.style.backgroundColor = "";
-                    clickedUppercase = null;
-
-                    uppercaseBoxes.forEach(box => box.style.pointerEvents = "auto");
-                    lowercaseBoxes.forEach(box => box.style.pointerEvents = "auto");
-                }, 1000);
-
-                score -= 2;
-                updateScore();
-            }
-        });
-    });
-}
-
-
-// Puzzle 2: Function to display new alphabets for puzzle 2 next round
-function nextRoundPuzzle2(newAlphabets) {
-    const alphabetsDisplayed = document.getElementById("alphabets-displayed");
-    const alphabetsOrder = document.getElementById("alphabets-order");
-    const displayedBoxes = Array.from(alphabetsDisplayed.getElementsByClassName("box"));
-    const orderBoxes = Array.from(alphabetsOrder.getElementsByClassName("box"));
-
-    // Reset displayed alphabets
-    displayedBoxes.forEach((box, index) => {
-        box.textContent = newAlphabets[index];
-        box.style.backgroundColor = "";
-        box.style.pointerEvents = "auto";
-    });
-
-    // Reset order boxes
-    orderBoxes.forEach(box => {
-        box.textContent = "";
-        box.style.backgroundColor = "";
-    });
-}
-
-// Puzzle 2: Alphabetical Ordering
-function setupPuzzle2() {
-    const alphabetsDisplayed = document.getElementById("alphabets-displayed");
-    const alphabetsOrder = document.getElementById("alphabets-order");
-    const displayedBoxes = Array.from(alphabetsDisplayed.getElementsByClassName("box"));
-    const orderBoxes = Array.from(alphabetsOrder.getElementsByClassName("box"));
-
-    let roundsCompleted = 0;
-    const rounds = 3;
-    let selectedIndex = 0;
-
-    function resetRound() {
-        selectedIndex = 0;
+class AlphabetQuiz {
+    constructor() {
+        this.score = 0;
+        this.timeLeft = 60;
+        this.timer = null;
+        this.currentQuestion = null;
+        this.initialized = false;
+        this.initializeEventListeners();
     }
 
-    function updatePuzzle2(shownAlphabets) {
-        const correctOrder = [...shownAlphabets].sort();
-        return correctOrder;
+    initializeEventListeners() {
+        if (this.initialized) return;
+        
+        document.getElementById('startButton').addEventListener('click', () => this.startQuiz());
+        document.getElementById('exitQuizButton').addEventListener('click', () => this.exitQuiz());
+        document.getElementById('playAgainButton').addEventListener('click', () => this.reset());
+        
+        this.initialized = true;
     }
 
-    displayedBoxes.forEach(renderedAlphabets => {
-        renderedAlphabets.addEventListener("click", async function () {
-            if (renderedAlphabets.style.pointerEvents === "none") return;
+    reset() {
+        this.score = 0;
+        this.timeLeft = 60;
+        clearInterval(this.timer);
+        this.timer = null;
+        this.currentQuestion = null;
+        
+        document.getElementById('score').textContent = '0';
+        document.getElementById('timer').textContent = '60';
+        document.getElementById('result-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        
+        this.displayQuestion();
+        this.startTimer();
+    }
 
-            const shownAlphabets = displayedBoxes.map(box => box.textContent);
-            const correctOrder = updatePuzzle2(shownAlphabets);
-            const alphabet = renderedAlphabets.textContent;
-
-            if (alphabet === correctOrder[selectedIndex]) {
-                const correspondingOrderBox = document.getElementById("box-" + (selectedIndex + 1));
-                correspondingOrderBox.textContent = renderedAlphabets.textContent;
-                renderedAlphabets.style.pointerEvents = "none";
-                correspondingOrderBox.style.backgroundColor = "lightgreen";
-                renderedAlphabets.style.backgroundColor = "lightgreen";
-                selectedIndex++;
-
-                score += 5;
-                updateScore();
-
-                // Check if current round is complete
-                if ([...orderBoxes].every(box => box.textContent !== "")) {
-                    roundsCompleted++;
-                    
-                    if (roundsCompleted < rounds) {
-                        // Fetch and display new alphabets for next round
-                        const newAlphabets = await nextRound();
-                        if (newAlphabets) {
-                            setTimeout(() => {
-                                nextRoundPuzzle2(newAlphabets.alphabet_displayed);
-                                resetRound();
-                            }, 1000);
-                        }
-                    } else {
-                        // Complete puzzle 2 and move to puzzle 3
-                        puzzle2Complete = true;
-                        setTimeout(() => switchToPuzzle3(), 1000);
-                    }
-                }
-            } else {
-                const correspondingOrderBox = document.getElementById("box-" + (selectedIndex + 1));
-                correspondingOrderBox.textContent = "🙅‍♂️";
-                correspondingOrderBox.style.backgroundColor = "red";
-                renderedAlphabets.style.backgroundColor = "red";
-
-                displayedBoxes.forEach(box => box.style.pointerEvents = "none");
-
-                setTimeout(() => {
-                    correspondingOrderBox.textContent = "";
-                    correspondingOrderBox.style.backgroundColor = "";
-                    renderedAlphabets.style.backgroundColor = "";
-
-                    renderedAlphabets.style.pointerEvents = "auto";
-                    displayedBoxes.forEach(box => box.style.pointerEvents = "auto");
-                }, 1000);
-
-                score -= 3;
-                updateScore();
+    startQuiz() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        this.displayQuestion();
+        this.startTimer();
+    }
+    startTimer() {
+        this.timer = setInterval(() => {
+            this.timeLeft--;
+            document.getElementById('timer').textContent = this.timeLeft;
+            
+            if (this.timeLeft <= 0) {
+                clearInterval(this.timer);
+                this.endQuiz();
             }
-        });
-    });
-}
-
-
-// Puzzle 3: Unscramble the Alphabets
-function setupPuzzle3() {
-    const alphasDisplayed = document.getElementById("alphas-displayed");
-    const alphasOrder = document.getElementById("alphas-order");
-    const displayedItems = Array.from(alphasDisplayed.getElementsByClassName("item"));
-    const orderItems = Array.from(alphasOrder.getElementsByClassName("item"));
-
-    const shownAlphas = displayedItems.map(item => item.textContent);
-    const alphabeticalOrder = [...shownAlphas].sort();
-
-    let currentIndex = 0;
-
-    displayedItems.forEach(renderedAlphas => {
-        renderedAlphas.addEventListener("click", function () {
-            if (renderedAlphas.style.pointerEvents === "none") return;
-
-            const alpha = renderedAlphas.textContent;
-
-            if (alpha === alphabeticalOrder[currentIndex]) {
-                const correspondingOrderItem = document.getElementById("item-" + (currentIndex + 1));
-                correspondingOrderItem.textContent = renderedAlphas.textContent;
-                renderedAlphas.style.pointerEvents = "none";
-                correspondingOrderItem.style.backgroundColor = "green";
-                renderedAlphas.style.backgroundColor = "green";
-                currentIndex++;
-
-                // Correct match to add 8 points
-                score += 8;
-                updateScore();
-            } else {
-                const correspondingOrderItem = document.getElementById("item-" + (currentIndex + 1));
-                correspondingOrderItem.textContent = "🙅‍♀️";
-                correspondingOrderItem.style.backgroundColor = "red";
-                renderedAlphas.style.backgroundColor = "red";
-
-                displayedItems.forEach(item => item.style.pointerEvents = "none");
-
-                setTimeout(() => {
-                    correspondingOrderItem.textContent = "";
-                    correspondingOrderItem.style.backgroundColor = "";
-                    renderedAlphas.style.backgroundColor = "";
-
-                    renderedAlphas.style.pointerEvents = "auto";
-                    displayedItems.forEach(box => box.style.pointerEvents = "auto");
-                }, 1000);
-
-                // Incorrect match to deduct 4 points
-                score -= 4;
-                updateScore();
-            }
-
-            if ([...orderItems].every(box => box.textContent !== "")) {
-                alert("Puzzle is complete!");
-                disableInteractions();
-                setTimeout(() => displayFinalScore(), 1000);
-            }
-        });
-    });
-}
-
-
-// Function to switch to Puzzle 2 after Puzzle 1 is completed
-function switchToPuzzle2() {
-    document.getElementById("puzzle-1").style.display = "none";
-    document.getElementById("lowercase-alphabets").style.display = "none";
-    document.getElementById("uppercase-alphabets").style.display = "none";
-    document.getElementById("rules-2").style.display = "flex";
-}
-
-// Function to switch to Puzzle 3 after Puzzle 2 is completed
-function switchToPuzzle3() {
-    document.getElementById("puzzle-2").style.display = "none";
-    document.getElementById("alphabets-order").style.display = "none";
-    document.getElementById("alphabets-displayed").style.display = "none";
-    document.getElementById("rules-3").style.display = "flex";
-}
-
-// Function to switch to Puzzle 3 after Puzzle 2 is completed
-function displayFinalScore() {
-    // Do not display timer, quit button and score
-    document.getElementById("time").style.display = "none";
-    document.getElementById("quitButton").style.display = "none";
-    document.getElementById("score").style.display = "none";
-    // Do not display anything related to puzzle-3
-    document.getElementById("puzzle-3").style.display = "none";
-    document.getElementById("alphas-order").style.display = "none";
-    document.getElementById("alphas-displayed").style.display = "none";
-    document.getElementById("rules-3").style.display = "none";
-    // Do not display anything related to puzzle-1
-    document.getElementById("puzzle-1").style.display = "none";
-    document.getElementById("lowercase-alphabets").style.display = "none";
-    document.getElementById("uppercase-alphabets").style.display = "none";
-    // Do not display anything related to puzzle-2
-    document.getElementById("puzzle-2").style.display = "none";
-    document.getElementById("alphabets-order").style.display = "none";
-    document.getElementById("alphabets-displayed").style.display = "none";
-    document.getElementById("rules-2").style.display = "none";
-    // Display congratulations and score
-    document.getElementById("congratulations").style.display = "flex";
-    document.getElementById("redirect").style.display = "flex";
+        }, 1000);
+    }
     
-    const overallScore = document.getElementById("overall-score");
-    overallScore.style.display = "flex";
-    overallScore.textContent = `Your Score: ${score}`;
-}
+    endQuiz() {
+        clearInterval(this.timer);
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('final-score').textContent = this.score;
+        document.getElementById('time-taken').textContent = 60 - this.timeLeft;
+    }
 
-// DOM content loaded event
-document.addEventListener("DOMContentLoaded", function () {
-    shuffleLowercase();
-    setupPuzzle1();
-    setupPuzzle2();
-    setupPuzzle3();
+    exitQuiz() {
+        clearInterval(this.timer);
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.add('hidden');
+        document.getElementById('start-screen').classList.remove('hidden');
+    }
 
-    // Show rules and start the game when the start button is clicked
-    startPuzzle1.addEventListener("click", function () {
-        document.getElementById("rules-1").style.display = "none";
-        document.getElementById("puzzle-1").style.display = "flex";
-        document.getElementById("score").style.display = "flex";
-        document.getElementById("score").style.justifyContent = "center";
-        document.getElementById("quitButton").style.display = "flex";
-        document.getElementById("lowercase-alphabets").style.display = "flex";
-        document.getElementById("uppercase-alphabets").style.display = "flex";
-        document.getElementById("time").style.display = "flex";
-        document.getElementById("time").style.justifyContent = "center";
-        startTimer(600);
-    });
+    generateQuestion() {
+        const questionTypes = [
+            this.generateNextLetterQuestion,
+            this.generatePreviousLetterQuestion,
+            this.generateMissingLetterQuestion,
+            this.generateVowelConsonantQuestion,
+        ];
+        const randomType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+        return randomType.call(this);
+    }
 
-    // Show rules and start the game when the start button is clicked
-    nextPuzzle2.addEventListener("click", function () {
-        document.getElementById("rules-2").style.display = "none";
-        document.getElementById("puzzle-2").style.display = "flex";
-        document.getElementById("alphabets-order").style.display = "flex";
-        document.getElementById("alphabets-displayed").style.display = "flex";
-    });
+    generateNextLetterQuestion() {
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const randomIndex = Math.floor(Math.random() * 25);
+        const letter = alphabet[randomIndex];
+        const correctAnswer = alphabet[randomIndex + 1];
+        const options = this.generateOptions(correctAnswer);
+        return {
+            question: `What letter comes after ${letter}?`,
+            options: options,
+            correctAnswer: correctAnswer,
+        };
+    }
 
-    // Show rules and start the game when the start button is clicked
-    nextPuzzle3.addEventListener("click", function () {
-        document.getElementById("rules-3").style.display = "none";
-        document.getElementById("puzzle-3").style.display = "flex";
-        document.getElementById("alphas-order").style.display = "flex";
-        document.getElementById("alphas-displayed").style.display = "flex";
-    });
+    generatePreviousLetterQuestion() {
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const randomIndex = Math.floor(Math.random() * 25) + 1;
+        const letter = alphabet[randomIndex];
+        const correctAnswer = alphabet[randomIndex - 1];
+        const options = this.generateOptions(correctAnswer);
+        return {
+            question: `What letter comes before ${letter}?`,
+            options: options,
+            correctAnswer: correctAnswer,
+        };
+    }
 
-    // Event listener for quit button
-    quitButton.addEventListener("click", toQuit);
-});
+    generateMissingLetterQuestion() {
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const randomIndex = Math.floor(Math.random() * 24) + 1;
+        const before = alphabet[randomIndex - 1];
+        const after = alphabet[randomIndex + 1];
+        const correctAnswer = alphabet[randomIndex];
+        const options = this.generateOptions(correctAnswer);
+        return {
+            question: `What letter goes between ${before} and ${after}?`,
+            options: options,
+            correctAnswer: correctAnswer,
+        };
+    }
 
+    generateVowelConsonantQuestion() {
+        const vowels = 'AEIOU';
+        const consonants = 'BCDFGHJKLMNPQRSTVWXYZ';
+        const isVowelQuestion = Math.random() < 0.5;
+        const numChoices = Math.floor(Math.random() * 3) + 3; // 3-5 letters
+        let correctAnswers = [];
+        let allOptions = [];
 
-async function saveScore() {
-    try {
-        const response = await fetch('/api/alpha-scores', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                score: finalScore,
-                timeTaken: 600 - timeLeft
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to save score');
+        if (isVowelQuestion) {
+            const randomVowel = vowels[Math.floor(Math.random() * vowels.length)];
+            correctAnswers.push(randomVowel);
+            allOptions.push(randomVowel);
+        } else {
+            const randomConsonant = consonants[Math.floor(Math.random() * consonants.length)];
+            correctAnswers.push(randomConsonant);
+            allOptions.push(randomConsonant);
         }
 
-        const data = await response.json();
-        console.log('Score saved successfully:', data);
-        
-        // Show congratulations message and final score
-        document.getElementById('congratulations').style.display = 'block';
-        document.getElementById('overall-score').style.display = 'block';
-        document.getElementById('overall-score').textContent = `Final Score: ${finalScore}`;
-        document.getElementById('redirect').style.display = 'flex';
-        
-    } catch (error) {
-        console.error('Error saving score:', error);
+        while (allOptions.length < numChoices) {
+            const isVowel = Math.random() < 0.3;
+            const letter = isVowel
+                ? vowels[Math.floor(Math.random() * vowels.length)]
+                : consonants[Math.floor(Math.random() * consonants.length)];
+            if (!allOptions.includes(letter)) {
+                allOptions.push(letter);
+                if (isVowelQuestion && isVowel) {
+                    correctAnswers.push(letter);
+                } else if (!isVowelQuestion && !isVowel) {
+                    correctAnswers.push(letter);
+                }
+            }
+        }
+
+        return {
+            question: `Select all the ${isVowelQuestion ? 'vowels' : 'consonants'}:`,
+            options: this.shuffleArray(allOptions),
+            correctAnswers: correctAnswers,
+        };
+    }
+
+    generateOptions(correctAnswer) {
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let options = [correctAnswer];
+        while (options.length < 4) {
+            const randomLetter = alphabet[Math.floor(Math.random() * 26)];
+            if (!options.includes(randomLetter)) {
+                options.push(randomLetter);
+            }
+        }
+        return this.shuffleArray(options);
+    }
+
+    shuffleArray(array) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+    }
+
+    displayQuestion() {
+        this.currentQuestion = this.generateQuestion();
+        document.getElementById('question').textContent = this.currentQuestion.question;
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+
+        const isMultiSelect = Array.isArray(this.currentQuestion.correctAnswers);
+        const selectedAnswers = new Set();
+
+        this.currentQuestion.options.forEach((option) => {
+            const button = document.createElement('button');
+            button.className = 'option-button';
+            button.textContent = option;
+            button.onclick = () => {
+                if (isMultiSelect) {
+                    if (selectedAnswers.has(option)) {
+                        selectedAnswers.delete(option);
+                        button.classList.remove('selected');
+                    } else {
+                        selectedAnswers.add(option);
+                        button.classList.add('selected');
+                    }
+                } else {
+                    this.checkAnswer([option]);
+                }
+            };
+            optionsContainer.appendChild(button);
+        });
+
+        if (isMultiSelect) {
+            const submitButton = document.createElement('button');
+            submitButton.textContent = 'Submit';
+            submitButton.className = 'submit-button';
+            submitButton.onclick = () => this.checkAnswer([...selectedAnswers]);
+            optionsContainer.appendChild(submitButton);
+        }
+    }
+
+    checkAnswer(selectedAnswers) {
+        const buttons = document.querySelectorAll('.option-button');
+        const correctAnswers = Array.isArray(this.currentQuestion.correctAnswers)
+            ? this.currentQuestion.correctAnswers
+            : [this.currentQuestion.correctAnswer];
+
+        const isCorrect = correctAnswers.every((answer) => selectedAnswers.includes(answer)) &&
+            selectedAnswers.every((answer) => correctAnswers.includes(answer));
+
+        buttons.forEach((button) => {
+            button.disabled = true;
+            if (correctAnswers.includes(button.textContent)) {
+                button.classList.add('correct');
+            } else if (selectedAnswers.includes(button.textContent)) {
+                button.classList.add('incorrect');
+            }
+        });
+
+        if (isCorrect) {
+            this.score += 10;
+            document.getElementById('score').textContent = this.score;
+        }
+
+        setTimeout(() => this.displayQuestion(), 1000);
     }
 }
-
-// Modify your quit button click handler
-document.getElementById('quitButton').addEventListener('click', () => {
-    clearInterval(timerId);
-    saveScore();
+document.addEventListener('DOMContentLoaded', () => {
+    const quiz = new AlphabetQuiz();
 });
-
-// Add this to your existing puzzle completion logic
-function onPuzzleComplete() {
-    clearInterval(timerId);
-    saveScore();
-}

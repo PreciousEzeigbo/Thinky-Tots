@@ -4,29 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math Quiz - ThinkyTots</title>
-    
-    <!-- React and ReactDOM -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    
-    <!-- Babel for JSX -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mathquiz.css') }}">
 </head>
-<body class="bg-gray-50">
-    <div id="mathQuizRoot"></div>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">Math Quiz</div>
+            <div class="header-right">
+                <span id="timer" class="timer">10:00</span>
+                <button id="exitButton" class="button button-red">Exit Quiz</button>
+            </div>
+        </div>
 
-    <!-- Pass Flask URL to JavaScript -->
-    <script>
-        const HOME_URL = "{{ url_for('public.home') }}";
-    </script>
+        <div id="exitConfirmModal" class="modal hidden">
+            <div class="modal-content">
+                <h3 class="modal-title">Exit Quiz?</h3>
+                <p class="modal-text">Are you sure you want to exit? Your progress will be lost.</p>
+                <div class="modal-buttons">
+                    <button id="cancelExit" class="button button-gray">Cancel</button>
+                    <button id="confirmExit" class="button button-red">Exit</button>
+                </div>
+            </div>
+        </div>
 
-    <!-- Custom JavaScript -->
-    <script type="text/babel" src="{{ url_for('static', filename='js/mathquiz.js') }}"></script>
+        <div class="stats">
+            <div class="score">Score: <span id="score">0</span></div>
+            <div class="level">Level: <span id="level">1</span></div>
+        </div>
+
+        <div id="gameContent" class="game-content">
+            <div id="question" class="math-question"></div>
+
+            <form id="answerForm" class="answer-form">
+                <input type="number" id="answerInput" class="answer-input" placeholder="Enter your answer" required>
+                <button type="submit" class="button button-blue">Submit Answer</button>
+            </form>
+
+            <div id="feedback" class="feedback-message hidden"></div>
+        </div>
+
+        <div id="gameOver" class="game-over hidden">
+            <h2 class="game-over-title">Game Over!</h2>
+            <p class="final-score">Final Score: <span id="finalScore">0</span></p>
+            <p class="questions-answered">Questions Answered: <span id="questionsAnswered">0</span></p>
+            <div class="game-over-buttons">
+                <button id="playAgain" class="button button-green">Play Again</button>
+                <button id="exitToHome" class="button button-red">Exit to Home</button>
+            </div>
+        </div>
+
+        <div class="rules-container">
+            <h3>Rules</h3>
+            <ul>
+                <li>Solve math problems within 10 minutes</li>
+                <li>Difficulty increases every 3 correct answers</li>
+                <li>Score more points at higher difficulty levels</li>
+                <li>All answers are whole numbers</li>
+            </ul>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/mathquiz.js') }}"></script>
 </body>
 </html>

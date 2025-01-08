@@ -1,244 +1,171 @@
-header {
-    background-color: white;
-    position: fixed;
-    padding-top: 75px;
-    top: 0;
-    left: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    box-shadow: 0 4px 8px #091a3a;
-    z-index: 1000;
-}
-
-header .thinkytots {
-    position: absolute;
-    top: 14px;
-    left: 70px;
-    background-color: transparent;
-}
-
-header .thinkytots-logo {
-    width: 170px;
-    height: auto;
-}
-
-.main-container {
-    display: flex;
-    margin-top: 80px;
-    background-color: white;
+* {
+    margin: 0;
     padding: 0;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px #091a3a;
-    max-width: 100%;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    overflow-y: auto;
-}
-
-.content {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.content h1 {
-    font-size: 25px;
-}
-
-.content h2 {
-    font-size: 25px;
-    justify-content: center;
-    text-align: center;
-}
-
-.content h3 {
-    font-size: 25px;
-    justify-content: center;
-    text-align: center;
-}
-
-.content h4 {
-    font-size: 30px;
-    justify-content: center;
-    text-align: center;
-}
-
-.alphabets {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
     box-sizing: border-box;
-    padding-top: 15px;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 20px;
 }
 
-.box {
-    background-color: rgb(233, 233, 233);
-    color: black;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f9fafb;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
     text-align: center;
-    padding: 10px;
-    font-size: 30px;
-    width: 50px;
-    min-width: 50px;
-    border-radius: 5px;
-    border: 2px solid black;
-    box-shadow: 0 4px 8px #091a3a;
-    margin: 0;
-    cursor: pointer;
 }
 
-.item {
-    background-color: rgb(233, 233, 233);
-    color: black;
-    text-align: center;
-    padding: 10px;
-    font-size: 30px;
-    width: 50px;
-    min-width: 50px;
-    border-radius: 5px;
-    border: 2px solid black;
-    box-shadow: 0 4px 8px #091a3a;
-    margin: 0;
-    cursor: pointer;
+h1 {
+    color: #1f2937;
+    margin-bottom: 2rem;
 }
 
-#time {
-    text-align: center;
-    font-size: 30px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #091a3a;
-}
-
-#score {
-    text-align: center;
-    font-size: 30px;
-    font-weight: bold;
-    margin-top: 30px;
-    color: #091a3a;
-    margin-bottom: 10px;
-}
-
-.rules {
-    display: flex;
-    flex-direction: column;
-    background-color: #f4f4f4;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(54, 51, 51, 0.1);
-    max-width: 500px;
-    margin: 30px auto;
-}
-
-.rules h1 {
-    font-size: 20px;
-    text-align: center;
-    color: black;
-    margin-bottom: 5px;
-}
-
-.rules ul {
-    list-style-type: disc;
-    padding-left: 20px;
-}
-
-.rules ul li {
-    font-size: 20px;
-    color: black;
-    margin-bottom: 10px;
-    padding-left: 0;
+.quiz-container {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-top: 2rem;
     position: relative;
 }
 
-#quitButton {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 10px 25px;
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 5px;
+.timer {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #3b82f6;
+    font-family: monospace;
+}
+
+.score {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #1f2937;
+}
+
+.question {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: #1f2937;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.option-button {
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background: none;
+    font-size: 1.2rem;
     cursor: pointer;
-    margin-bottom: -10px;
+    transition: all 0.2s;
 }
 
-#startPuzzle1 {
-    background-color: red;
-    color: white;
+.option-button:hover:not(:disabled) {
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.option-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.start-button, .exit-button {
+    padding: 1rem 2rem;
     border: none;
-    padding: 10px 25px;
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 5px;
+    border-radius: 0.5rem;
+    font-size: 1.2rem;
     cursor: pointer;
-    margin-bottom: -10px;
-}
-
-#nextPuzzle2 {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 10px 25px;
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: -10px;
-}
-
-#nextPuzzle3 {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 10px 25px;
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: -10px;
-}
-
-.overall-score {
-    font-size: 40px;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.redirect {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
-#try-again {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: -10px;
-}
-
-#go-to-dashboard {
-    background-color: #091a3a;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: -10px;
-}
-
-.redirect a {
+    transition: background-color 0.2s;
     text-decoration: none;
+    display: inline-block;
+}
+
+.start-button {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.start-button:hover {
+    background-color: #2563eb;
+}
+
+.exit-button {
+    background-color: #ef4444;
+    color: white;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.exit-button:hover {
+    background-color: #dc2626;
+}
+
+.correct {
+    background-color: #34d399;
+    color: white;
+    border-color: #34d399;
+}
+
+.incorrect {
+    background-color: #f87171;
+    color: white;
+    border-color: #f87171;
+}
+
+.selected {
+    background-color: #fde68a;
+    border-color: #f59e0b;
+    color: #000;
+}
+
+.result-screen {
+    text-align: center;
+    padding: 2rem;
+}
+
+.result-screen h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #1f2937;
+}
+
+.result-screen p {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #4b5563;
+}
+
+.button-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.submit-button {
+    grid-column: 1 / -1;
+    background-color: #3b82f6;
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+    background-color: #2563eb;
+}
+
+.hidden {
+    display: none !important;
 }
