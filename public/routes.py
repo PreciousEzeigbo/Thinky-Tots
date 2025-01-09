@@ -99,14 +99,6 @@ def register_routes(app, db, bcrypt):
         """Render the profile page for logged-in users."""
         return render_template("profile.html")
     
-    # Forgotten password route - displays a form to recover password
-    @public_bp.route('/forgotten', methods=['GET', 'POST'])
-    def forgotten():
-        if request.method == 'GET':
-            return render_template('forgotten.html')
-        elif request.method == 'POST':
-            pass
-    
     # Logout route - logs the user out and redirects to login page
     @public_bp.route('/logout')
     def logout():
