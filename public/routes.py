@@ -55,7 +55,7 @@ def register_routes(app, db, bcrypt):
                 # Return a success response and redirect to login page
                 return jsonify({
                     'message': 'Registration successful!',
-                    'redirect_to': '/login'  # Redirect after successful registration
+                    'redirect_to': url_for('public.login')  # Redirect after successful registration
                 }), 200  # OK
             except Exception as e:
                 db.session.rollback()
@@ -81,8 +81,8 @@ def register_routes(app, db, bcrypt):
                     login_user(user)
                     return jsonify({
                         'message': 'Login successful',
-                        'redirect_to': '/home'
-                    }), 200
+                        'redirect_to': url_for('public.home') # Redirect after successful login
+                    }), 200 # OK
                 else:
                     # Invalid password
                     return jsonify({'error': 'Invalid credentials'}), 401  # Unauthorized
@@ -101,8 +101,10 @@ def register_routes(app, db, bcrypt):
     @public_bp.route('/logout')
     def logout():
         logout_user()
-        flash('You have been logged out.', 'info')
-        return redirect(url_for('public.login'))
+        return jsonify({
+        'message': 'You have been logged out.',
+        'redirect_to': url_for('public.login')  # Redirect after successful logout
+    }), 200  # OK
     
     # Home route (dashboard) - To display dashboard
     @public_bp.route('/home')
