@@ -23,17 +23,7 @@
         </div>
 
         <!-- Form container for user registration -->
-        <div class="container">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-            
+        <div class="container">   
             <!-- Header for the registration form -->
             <div class="header">
                 <h2>Create Account</h2>

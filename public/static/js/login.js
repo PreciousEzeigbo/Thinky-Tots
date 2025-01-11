@@ -1,6 +1,6 @@
 // Login form handling
 const form = document.getElementById('form');
-const emailOrUsername = document.getElementById('userIdentifier');
+const userIdentifier = document.getElementById('userIdentifier');
 const password = document.getElementById('password');
 
 // Check if the login form exists on the page
@@ -22,13 +22,19 @@ if (form) {
                     body: formData,
                 });
 
+                // Handle the response from the server
+                const data = await response.json();
+
                 if (response.ok) {
-                    // Handle successful login (e.g., redirect to a new page)
-                    window.location.href = '/home';
+                    // If login is successful, check the message from the server
+                    if (data.message === 'Login successful') {
+                        // Redirect to the page received from the server (Home Page)
+                        window.location.href = data.redirect_to;
+                    }
                 } else {
-                    // Handle login failure (e.g., display an error message)
-                    setErrorFor(userIdentifier, "Invalid email/username or password");
-                    setErrorFor(password, "");
+                    // Handle login failure
+                    setErrorFor(userIdentifier, data.error || "Invalid email/username");
+                    setErrorFor(password, data.error || "Invalid password");
                 }
             } catch (error) {
                 console.error("Error submitting form:", error);
@@ -36,6 +42,7 @@ if (form) {
         }
     });
 }
+
 
 // Validation function
 function checkInputs() {

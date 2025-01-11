@@ -31,40 +31,36 @@ def register_routes(app, db, bcrypt):
 
             # Validate required fields
             if not username or not email or not password or not confirmPassword:
-                flash("All fields are required", 'danger')
-                return redirect(url_for('public.register'))
+                return jsonify({'error': 'All fields are required'}), 400  # Bad Request
 
             # Check if the passwords match
             if password != confirmPassword:
-                flash("Passwords do not match", 'danger')
-                return redirect(url_for('public.register'))
+                return jsonify({'error': 'Passwords do not match'}), 400 # Bad Request
 
             # Check if the username or email already exists
             if User.query.filter_by(username=username).first():
-                flash("User already exists", 'danger')
-                return redirect(url_for('public.register'))
+                return jsonify({'error': 'User already exists'}), 400 # Bad Request
 
             if User.query.filter_by(email=email).first():
-                flash("Email already in use", 'danger')
-                return redirect(url_for('public.register'))
+                return jsonify({'error': 'Email already in use'}), 400 # Bad Request
 
             # Create and save the new user
             new_user = User(username=username, email=email)
-
-            # Hash the password before saving the user
             try:
-                new_user.set_password(password)
+                new_user.set_password(password) # Hash the password before saving the user
 
                 # Save the new user to the database
                 db.session.add(new_user)
                 db.session.commit()
-                flash("Registration successful!", 'success')
-                return redirect(url_for('public.login'))
+
+                # Return a success response and redirect to login page
+                return jsonify({
+                    'message': 'Registration successful!',
+                    'redirect_to': url_for('public.login')  # Redirect after successful registration
+                }), 200  # OK
             except Exception as e:
-                # Rollback if an error occurs
                 db.session.rollback()
-                flash(f"An error occurred: {str(e)}", 'danger')
-                return redirect(url_for('public.register'))
+                return jsonify({'error': f'An error occurred: {str(e)}'}), 500  # Internal Server Error
 
     # Login route - handles user authentication and login form display
     @public_bp.route('/login', methods=['GET', 'POST'])
@@ -84,14 +80,16 @@ def register_routes(app, db, bcrypt):
                 if user.check_password(password):
                     # Log in the user
                     login_user(user)
-                    return redirect(url_for('public.home'))
+                    return jsonify({
+                        'message': 'Login successful',
+                        'redirect_to': url_for('public.home') # Redirect after successful login
+                    }), 200 # OK
                 else:
-                    flash('Invalid password, please try again.', 'danger')
-                    return redirect(url_for('public.login'))
+                    # Invalid password
+                    return jsonify({'error': 'Invalid credentials'}), 401  # Unauthorized
             else:
-                # Invalid credentials
-                flash('Invalid userIdentifier or password', 'danger')
-                return redirect(url_for('public.login'))
+                # Invalid user
+                return jsonify({'error': 'Invalid credentials'}), 401  # Unauthorized
             
     # Profile route - shows the user's profile page
     @public_bp.route('/profile')
@@ -100,20 +98,14 @@ def register_routes(app, db, bcrypt):
         """Render the profile page for logged-in users."""
         return render_template("profile.html")
     
-    # Forgotten password route - displays a form to recover password
-    @public_bp.route('/forgotten', methods=['GET', 'POST'])
-    def forgotten():
-        if request.method == 'GET':
-            return render_template('forgotten.html')
-        elif request.method == 'POST':
-            pass
-    
     # Logout route - logs the user out and redirects to login page
     @public_bp.route('/logout')
     def logout():
         logout_user()
-        flash('You have been logged out.', 'info')
-        return redirect(url_for('public.login'))
+        return jsonify({
+        'message': 'You have been logged out.',
+        'redirect_to': url_for('public.login')  # Redirect after successful logout
+    }), 200  # OK
     
     # Home route (dashboard) - To display dashboard
     @public_bp.route('/home')
