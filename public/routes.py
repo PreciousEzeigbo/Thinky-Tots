@@ -6,6 +6,7 @@ from sqlalchemy import desc
 from public.models import User, db,  QuizScore, AlphaScore
 
 
+
 def register_routes(app, db, bcrypt):
     # Create a blueprint for the public routes
     public_bp = Blueprint('public', __name__, template_folder='templates', static_folder='static')
