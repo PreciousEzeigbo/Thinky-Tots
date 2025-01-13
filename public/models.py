@@ -41,7 +41,10 @@ class User(db.Model, UserMixin):
     @property
     def id(self):
         return self.uid
-    
+
+# Math Quiz Score Model
+
+# Model for storing scores of the Math Quiz
 class QuizScore(db.Model):
     """Model for storing quiz scores of users."""
     id = db.Column(db.Integer, primary_key=True)
@@ -67,12 +70,15 @@ class QuizScore(db.Model):
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
 
+# Alphabet Quiz Score Model
+
 # Model for storing scores of the Alphabet puzzle
 class AlphaScore(db.Model):
     """Model for storing scores of the Alphabet puzzle."""
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.uid'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
+    questions_answered = db.Column(db.Integer, nullable=False)
     time_taken = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
@@ -85,6 +91,7 @@ class AlphaScore(db.Model):
             'id': self.id,
             'username': self.user.username,
             'score': self.score,
+            'questions_answered': self.questions_answered,
             'time_taken': self.time_taken,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
