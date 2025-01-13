@@ -1,5 +1,5 @@
-// Class to handle the ScoresPage functionality, which displays leaderboard and personal scores
-class ScoresPage {
+// Class to handle the AlphaScoresPage functionality, which displays leaderboard and personal scores
+class AlphaScoresPage {
     constructor() {
         this.currentPage = 1;
         this.currentView = 'leaderboard';
@@ -12,50 +12,47 @@ class ScoresPage {
         this.fetchScores();
     }
 
-    // Attach event listeners to all the tabs for switching between leaderboard and personal views
+    // Attaches event listeners to the tab elements to allow view switching
     attachEventListeners() {
-        // Select all elements with the tab class
         document.querySelectorAll('.tab').forEach(tab => {
-            // Add click event to switch views when the tab is clicked
             tab.addEventListener('click', () => {
                 this.switchView(tab.dataset.view);
             });
         });
     }
 
-    // Fetch the scores data from the server and update the page accordingly
+    // Asynchronously fetches the scores based on the current view of leaderboard or personal
     async fetchScores() {
         const contentDiv = document.getElementById('scoresContent');
         contentDiv.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-
+        
         try {
-            // Choose the API endpoint based on the current view, leaderboard or personal
             const endpoint = this.currentView === 'leaderboard' 
-                ? `/api/alpha-scores/leaderboard?page=${this.currentPage}`
-                : `/api/alpha-scores/personal?page=${this.currentPage}`;
+                ? `/api/alpha_scores/leaderboard?page=${this.currentPage}` // Fetch leaderboard data
+                : `/api/alpha_scores/personal?page=${this.currentPage}`; // Fetch personal scores data 
             
             const response = await fetch(endpoint);
-            if (!response.ok) throw new Error('Failed to fetch scores');
+            if (!response.ok) throw new Error('Failed to fetch scores'); // Handle errors if the fetch fails
             
             const data = await response.json();
             this.renderScores(data);
         } catch (error) {
-            // Show error message if fetching scores fails
+            // If an error occurs, show an error message
             contentDiv.innerHTML = `
                 <div class="error">
                     Error loading scores. Please try again later.
                 </div>
             `;
-            console.error('Error:', error); // Log the error to the console for debugging
+            console.error('Error:', error);
         }
     }
 
-    // Switch between the leaderboard and personal views when a tab is clicked
+    // Switches between views and resets the current page
     switchView(view) {
         this.currentView = view;
         this.currentPage = 1;
-        
-        // Update active tab to highlight the selected one
+
+        // Update the active class on tabs based on the selected view
         document.querySelectorAll('.tab').forEach(tab => {
             tab.classList.toggle('active', tab.dataset.view === view);
         });
@@ -63,14 +60,14 @@ class ScoresPage {
         this.fetchScores();
     }
 
-    // Format the time
+    // Formats the time
     formatTime(seconds) {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
 
-    // Format the date
+    // Formats the date
     formatDate(dateString) {
         return new Date(dateString).toLocaleString('en-US', {
             year: 'numeric',
@@ -81,12 +78,12 @@ class ScoresPage {
         });
     }
 
-    // Render the scores in a table format on the page
+    // Renders the fetched scores into the HTML table and handles pagination
     renderScores(data) {
         const { scores, total_pages, current_page } = data;
         const startRank = (current_page - 1) * 10 + 1;
 
-        // Create the HTML table for displaying the scores
+        // Generate HTML for the scores table
         const tableHTML = `
             <div class="table-container">
                 <table>
@@ -95,6 +92,7 @@ class ScoresPage {
                             <th>Rank</th>
                             <th>Player</th>
                             <th>Score</th>
+                            <th>Questions</th>
                             <th>Time</th>
                             <th>Date</th>
                         </tr>
@@ -102,11 +100,12 @@ class ScoresPage {
                     <tbody>
                         ${scores.map((score, index) => `
                             <tr>
-                                <td>${startRank + index}</td>
-                                <td>${score.username}</td>
-                                <td>${score.score}</td>
-                                <td>${this.formatTime(score.time_taken)}</td>
-                                <td>${this.formatDate(score.created_at)}</td>
+                                <td>${startRank + index}</td> <!-- Rank based on current page -->
+                                <td>${score.username}</td> <!-- Player's username -->
+                                <td>${score.score}</td> <!-- Player's score -->
+                                <td>${score.questions_answered}</td> <!-- Number of questions answered -->
+                                <td>${this.formatTime(score.time_taken)}</td> <!-- Time taken, formatted -->
+                                <td>${this.formatDate(score.created_at)}</td> <!-- Date of the score, formatted -->
                             </tr>
                         `).join('')}
                     </tbody>
@@ -115,19 +114,18 @@ class ScoresPage {
             ${this.renderPagination(total_pages, current_page)} <!-- Render pagination controls -->
         `;
 
-        // Update the scores content with the new table
         document.getElementById('scoresContent').innerHTML = tableHTML;
-        this.attachPaginationListeners();
+        this.attachPaginationListeners(); // Attach event listeners to pagination buttons
     }
 
-    // Render pagination controls based on the total pages and current page
+    // Generates the pagination controls based on the total number of pages
     renderPagination(totalPages, currentPage) {
-        if (totalPages <= 1) return '';
+        if (totalPages <= 1) return ''; // Don't show pagination if there's only one page
 
-        // Create pagination buttons for each page
+        // Generate pagination HTML
         return `
             <div class="pagination">
-                ${Array.from({ length: totalPages }, (_, i) => i + 1)
+                ${Array.from({ length: totalPages }, (_, i) => i + 1) // Generate buttons for each page number
                     .map(page => `
                         <button class="page-button ${page === currentPage ? 'active' : ''}" 
                                 data-page="${page}">
@@ -138,7 +136,7 @@ class ScoresPage {
         `;
     }
 
-    // Attach event listeners to pagination buttons for switching pages
+    // Attaches event listeners to pagination buttons to navigate between pages
     attachPaginationListeners() {
         document.querySelectorAll('.page-button').forEach(button => {
             button.addEventListener('click', () => {
@@ -149,7 +147,7 @@ class ScoresPage {
     }
 }
 
-// Initialize the ScoresPage when the DOM is loaded so the page can start interacting
+// Initialize the AlphaScoresPage class when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new ScoresPage();
+    new AlphaScoresPage();
 });

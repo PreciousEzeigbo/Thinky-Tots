@@ -1,61 +1,82 @@
-// Variables to track the game's progress and state
-let currentQuestion = null;
-let score = 0;
-let difficulty = 1;
-let timeLeft = 600;
-let gameOver = false;
-let questionsAnswered = 0;
-let timer = null;
+// Constants
+const GAME_DURATION = 600; // Game time in seconds (10 minutes)
+const MAX_DIFFICULTY = 4;
+const QUESTIONS_PER_LEVEL = 3;
+const POINTS_MULTIPLIER = 10;
 
-// Select DOM elements for displaying the game UI
-const timerElement = document.getElementById('timer');
-const scoreElement = document.getElementById('score');
-const levelElement = document.getElementById('level');
-const questionElement = document.getElementById('question');
-const answerForm = document.getElementById('answerForm');
-const answerInput = document.getElementById('answerInput');
-const feedbackElement = document.getElementById('feedback');
-const gameContent = document.getElementById('gameContent');
-const gameOverScreen = document.getElementById('gameOver');
-const finalScoreElement = document.getElementById('finalScore');
-const questionsAnsweredElement = document.getElementById('questionsAnswered');
-const exitConfirmModal = document.getElementById('exitConfirmModal');
+// DOM Elements
+const UI = {
+    timer: document.getElementById('timer'),
+    score: document.getElementById('score'),
+    level: document.getElementById('level'),
+    question: document.getElementById('question'),
+    form: document.getElementById('answerForm'),
+    input: document.getElementById('answerInput'),
+    feedback: document.getElementById('feedback'),
+    screens: {
+        game: document.getElementById('gameContent'),
+        gameOver: document.getElementById('gameOver')
+    },
+    modal: {
+        exit: document.getElementById('exitConfirmModal')
+    },
+    results: {
+        finalScore: document.getElementById('finalScore'),
+        questionsAnswered: document.getElementById('questionsAnswered')
+    }
+};
 
-// Function to generate a random number based on difficulty
-function getRandomNumber(difficulty) {
-    const max = Math.pow(10, difficulty);
-    return Math.floor(Math.random() * max);
-}
+// Game State
+const gameState = {
+    currentQuestion: null,
+    score: 0,
+    difficulty: 1,
+    timeLeft: GAME_DURATION,
+    gameOver: false,
+    questionsAnswered: 0,
+    timer: null
+};
 
-// Function to generate a random math question based on difficulty level
-function generateQuestion(diff) {
-    const num1 = getRandomNumber(diff);
-    const num2 = getRandomNumber(diff);
-    const operations = ['+', '-', '×', '÷'];
-    let operation = operations[Math.floor(Math.random() * operations.length)];
-    
-    // Handle division separately to avoid fractions
-    if (operation === '÷') {
-        const product = num1 * num2;
+// Math Generation Functions
+const mathGenerators = {
+    // Function to generate a random number based on difficulty
+    getRandomNumber(difficulty) {
+        const max = Math.pow(10, difficulty);
+        return Math.floor(Math.random() * max);
+    },
+
+    // Function to generate a random math question based on difficulty level
+    generateQuestion(diff) {
+        const num1 = this.getRandomNumber(diff);
+        const num2 = this.getRandomNumber(diff);
+        const operations = ['+', '-', '×', '÷'];
+        let operation = operations[Math.floor(Math.random() * operations.length)];
+        
+        // Handle division separately to avoid fractions
+        if (operation === '÷') {
+            const product = num1 * num2;
+            return {
+                question: `${product} ÷ ${num1}`,
+                answer: num2
+            };
+        }
+        
+        let answer;
+        switch (operation) {
+            case '+': answer = num1 + num2; break; // Addition
+            case '-': answer = num1 - num2; break; // Subtraction
+            case '×': answer = num1 * num2; break; // Multiplication
+            default: answer = num1; // Fallback should not happen
+        }
+        
         return {
-            question: `${product} ÷ ${num1}`,
-            answer: num2
+            question: `${num1} ${operation} ${num2}`,
+            answer: answer
         };
     }
-    
-    let answer;
-    switch (operation) {
-        case '+': answer = num1 + num2; break; // Addition
-        case '-': answer = num1 - num2; break; // Subtraction
-        case '×': answer = num1 * num2; break; // Multiplication
-        default: answer = num1; // Fallback should not happen
-    }
-    
-    return {
-        question: `${num1} ${operation} ${num2}`,
-        answer: answer
-    };
-}
+};
+
+// Utility Functions
 
 // Function to format time
 function formatTime(seconds) {
@@ -66,12 +87,14 @@ function formatTime(seconds) {
 
 // Function to display feedback if correct or incorrect answers
 function showFeedback(message, type) {
-    feedbackElement.textContent = message;
-    feedbackElement.className = `feedback-message feedback-${type}`;
+    UI.feedback.textContent = message;
+    UI.feedback.className = `feedback-message feedback-${type}`;
     setTimeout(() => {
-        feedbackElement.className = 'feedback-message hidden';
+        UI.feedback.className = 'feedback-message hidden';
     }, 2000);
 }
+
+// API Functions
 
 // Function to save the player's score to the server
 async function saveScore() {
@@ -83,10 +106,10 @@ async function saveScore() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                score,
-                questionsAnswered,
-                maxDifficulty: difficulty,
-                timeLeft
+                score: gameState.score,
+                questionsAnswered: gameState.questionsAnswered,
+                maxDifficulty: gameState.difficulty,
+                timeLeft: gameState.timeLeft
             })
         });
         
@@ -98,39 +121,39 @@ async function saveScore() {
     }
 }
 
-// Game Logic Functions
+// Game Flow Functions
 
 // Function to start a new game
 function startGame() {
-    // Reset all game state variables
-    score = 0;
-    difficulty = 1;
-    timeLeft = 600;
-    gameOver = false;
-    questionsAnswered = 0;
+    // Reset game state
+    gameState.score = 0;
+    gameState.difficulty = 1;
+    gameState.timeLeft = GAME_DURATION;
+    gameState.gameOver = false;
+    gameState.questionsAnswered = 0;
     
     // Update the UI with initial values
-    scoreElement.textContent = score;
-    levelElement.textContent = difficulty;
-    currentQuestion = generateQuestion(difficulty);
-    questionElement.textContent = currentQuestion.question;
+    UI.score.textContent = gameState.score;
+    UI.level.textContent = gameState.difficulty;
+    gameState.currentQuestion = mathGenerators.generateQuestion(gameState.difficulty);
+    UI.question.textContent = gameState.currentQuestion.question;
     
     // Show the game content and hide the game over screen
-    gameContent.classList.remove('hidden');
-    gameOverScreen.classList.add('hidden');
+    UI.screens.game.classList.remove('hidden');
+    UI.screens.gameOver.classList.add('hidden');
     
     startTimer(); // Start the timer
 }
 
 // Function to start the countdown timer
 function startTimer() {
-    if (timer) clearInterval(timer);
+    if (gameState.timer) clearInterval(gameState.timer);
     
-    timer = setInterval(() => {
-        timeLeft--;
-        timerElement.textContent = formatTime(timeLeft);
+    gameState.timer = setInterval(() => {
+        gameState.timeLeft--;
+        UI.timer.textContent = formatTime(gameState.timeLeft);
         
-        if (timeLeft <= 0) {
+        if (gameState.timeLeft <= 0) {
             endGame();
         }
     }, 1000);
@@ -138,73 +161,71 @@ function startTimer() {
 
 // Function to end the game
 function endGame() {
-    gameOver = true;
-    clearInterval(timer);
+    gameState.gameOver = true;
+    clearInterval(gameState.timer);
     saveScore();
     
     // Show game over screen and display final score
-    gameContent.classList.add('hidden');
-    gameOverScreen.classList.remove('hidden');
-    finalScoreElement.textContent = score;
-    questionsAnsweredElement.textContent = questionsAnswered;
+    UI.screens.game.classList.add('hidden');
+    UI.screens.gameOver.classList.remove('hidden');
+    UI.results.finalScore.textContent = gameState.score;
+    UI.results.questionsAnswered.textContent = gameState.questionsAnswered;
 }
 
-// Event Handlers
-
 // Handle the answer submission
-answerForm.addEventListener('submit', (e) => {
+function handleAnswer(e) {
     e.preventDefault(); // Prevent the form from refreshing the page
+
+    if (gameState.gameOver) return; // Prevent answering after game over
     
-    const userAnswer = parseInt(answerInput.value); // Get the users answer
-    const isCorrect = userAnswer === currentQuestion.answer; // Check if the answer is correct
+    const userAnswer = parseInt(UI.input.value); // Get the users answer
+    const isCorrect = userAnswer === gameState.currentQuestion.answer; // Check if the answer is correct
     
     if (isCorrect) {
-        score += difficulty * 10; // Award score based on difficulty
-        questionsAnswered++; // Increase number of answered questions
-        scoreElement.textContent = score;
+        gameState.score += gameState.difficulty * POINTS_MULTIPLIER; // Award score based on difficulty
+        gameState.questionsAnswered++; // Increase number of answered questions
+        UI.score.textContent = gameState.score;
         showFeedback('Correct! Well done!', 'success');
         
-        // Increase difficulty every 3 questions answered
-        if (questionsAnswered > 0 && questionsAnswered % 3 === 0) {
-            difficulty = Math.min(difficulty + 1, 4);
-            levelElement.textContent = difficulty;
+        // Increase difficulty every QUESTIONS_PER_LEVEL questions
+        if (gameState.questionsAnswered > 0 && gameState.questionsAnswered % QUESTIONS_PER_LEVEL === 0) {
+            gameState.difficulty = Math.min(gameState.difficulty + 1, MAX_DIFFICULTY);
+            UI.level.textContent = gameState.difficulty;
         }
     } else {
-        showFeedback(`Incorrect. The answer was ${currentQuestion.answer}`, 'error'); // Show error message
+        showFeedback(`Incorrect. The answer was ${gameState.currentQuestion.answer}`, 'error'); // Show error message
     }
     
     // Generate the next question and update the display
-    currentQuestion = generateQuestion(difficulty);
-    questionElement.textContent = currentQuestion.question;
-    answerInput.value = '';
-});
+    gameState.currentQuestion = mathGenerators.generateQuestion(gameState.difficulty);
+    UI.question.textContent = gameState.currentQuestion.question;
+    UI.input.value = '';
+}
 
 // Handle the exit button
-document.getElementById('exitButton').addEventListener('click', () => {
-    if (score > 0 || questionsAnswered > 0) {
-        exitConfirmModal.classList.remove('hidden');
+function handleExit() {
+    if (gameState.score > 0 || gameState.questionsAnswered > 0) {
+        UI.modal.exit.classList.remove('hidden');
     } else {
-        window.location.href = '/home';
+        window.location.href = '/home'; // Go back to dashboard
     }
-});
+}
 
-// Handle canceling exit confirmation
-document.getElementById('cancelExit').addEventListener('click', () => {
-    exitConfirmModal.classList.add('hidden');
-});
+function hideExitModal() {
+    UI.modal.exit.classList.add('hidden');
+}
 
-// Handle confirming exit and going back to dashboard
-document.getElementById('confirmExit').addEventListener('click', () => {
+function navigateToHome() {
     window.location.href = '/home'; // Go back to dashboard
-});
+}
 
-// Handle going back to dashboard from the exit modal
-document.getElementById('exitToHome').addEventListener('click', () => {
-    window.location.href = '/home'; // Redirect to dashboard
-});
-
-// Handle restarting the game
-document.getElementById('playAgain').addEventListener('click', startGame); // Start a new game
+// Event Listeners
+UI.form.addEventListener('submit', handleAnswer);
+document.getElementById('exitButton').addEventListener('click', handleExit);
+document.getElementById('cancelExit').addEventListener('click', hideExitModal);
+document.getElementById('confirmExit').addEventListener('click', navigateToHome);
+document.getElementById('exitToHome').addEventListener('click', navigateToHome);
+document.getElementById('playAgain').addEventListener('click', startGame);
 
 // Start the game automatically when the page is loaded
 startGame(); // Begin the game
