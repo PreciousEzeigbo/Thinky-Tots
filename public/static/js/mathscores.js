@@ -117,7 +117,7 @@ class ScoresPage {
             ${this.renderPagination(total_pages, current_page)} <!-- Render pagination controls -->
         `;
 
-        document.getElementById('scoresContent').innerHTML = tableHTML; // Update the scores content in the DOM
+        document.getElementById('scoresContent').innerHTML = tableHTML;
         this.attachPaginationListeners(); // Attach event listeners to pagination buttons
     }
 

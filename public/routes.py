@@ -135,35 +135,63 @@ def register_routes(app, db, bcrypt):
         '''Scores page for both Alpha and Mathquiz'''
         return render_template("main_scores.html")
     
-    # API route to save quiz score
-    @public_bp.route('/api/scores', methods=['POST'])
+    # Math Quiz
+    
+    # Maths scores page route
+    @public_bp.route('/scores')
     @login_required # Only authenticated users can access this route
+    def scores():
+        return render_template('mathscores.html')
+    
+    # API route to save maths quiz score
+    @public_bp.route('/api/scores', methods=['POST'])
+    @login_required  # Only authenticated users can access this route
     def save_score():
-        data = request.json # Get JSON data from the request
-        
-        # Create a new QuizScore object and save to the database
-        new_score = QuizScore(
-            user_id=current_user.uid,
-            score=data['score'],
-            questions_answered=data['questionsAnswered'],
-            max_difficulty=data['maxDifficulty'],
-            time_taken=600 - data['timeLeft']
-        )
+        try:
+            # Get JSON data from the request
+            data = request.json
+            if not data:
+                return jsonify({'error': 'No data provided'}), 400  # Bad Request
+            
+            # Extract necessary data
+            score = data.get('score')
+            questions_answered = data.get('questionsAnswered')
+            max_difficulty = data.get('maxDifficulty')
+            time_left = data.get('timeLeft')
 
-        db.session.add(new_score)
-        db.session.commit()
+            # Validate data
+            if score is None or questions_answered is None or max_difficulty is None or time_left is None:
+                return jsonify({'error': 'Missing required fields'}), 400  # Bad Request
 
-        # Return success response
-        return jsonify({'message': 'Score saved successfully'})
+            # Create a new QuizScore object and save to the database
+            new_score = QuizScore(
+                user_id=current_user.uid,
+                score=score,
+                questions_answered=questions_answered,
+                max_difficulty=max_difficulty,
+                time_taken=600 - time_left
+            )
+            
+            # Commit the new score to the database
+            db.session.add(new_score)
+            db.session.commit()
+            
+            # Return success response
+            return jsonify({'message': 'Score saved successfully'}), 200  # OK
 
-    # API route to get personal quiz scores for the current user
+        except Exception as e:
+            # Handle any unexpected errors
+            db.session.rollback()  # Rollback any changes in case of error
+            return jsonify({'error': f'An error occurred: {str(e)}'}), 500  # Internal Server Error
+
+    # API route to get personal maths quiz scores for the current user
     @public_bp.route('/api/scores/personal', methods=['GET'])
     @login_required # Only authenticated users can access this route
     def get_personal_scores():
         page = request.args.get('page', 1, type=int)
         per_page = 10
         
-        # Get quiz scores for the current user, sorted by score and date
+        # Get maths quiz scores for the current user, sorted by score and date
         scores = QuizScore.query\
             .filter_by(user_id=current_user.uid)\
             .order_by(
@@ -177,7 +205,7 @@ def register_routes(app, db, bcrypt):
             'current_page': scores.page
         })
 
-    # API route to get the global leaderboard of quiz scores
+    # API route to get the global leaderboard of maths quiz scores
     @public_bp.route('/api/scores/leaderboard', methods=['GET'])
     def get_leaderboard():
         page = request.args.get('page', 1, type=int)
@@ -195,29 +223,51 @@ def register_routes(app, db, bcrypt):
             'total_pages': scores.pages,
             'current_page': scores.page
         })
-
-    # Scores page route for math scores
-    @public_bp.route('/scores')
+    
+    # Alphabet Quiz
+    
+    # Alphabet scores page route
+    @public_bp.route('/alpha_scores')
     @login_required # Only authenticated users can access this route
-    def scores():
-        return render_template('mathscores.html')
+    def alpha_scores():
+        return render_template('alpha_scores.html')
     
     # API route to save Alphabets puzzle score
     @public_bp.route('/api/alpha_scores', methods=['POST'])
-    @login_required # Only authenticated users can access this route
+    @login_required
     def save_alpha_score():
-        data = request.json
-        
-        new_score = AlphaScore(
-            user_id=current_user.uid,
-            score=data['score'],
-            time_taken=data['timeTaken']
-        )
-        
-        db.session.add(new_score)
-        db.session.commit()
-        
-        return jsonify({'message': 'Score saved successfully'})
+        try:
+            # Get JSON data from the request
+            data = request.json
+            if not data:
+                return jsonify({'error': 'No data provided'}), 400
+
+            # Extract necessary data
+            score = data.get('score')
+            questions_answered = data.get('questionsAnswered')
+            time_left = data.get('timeLeft')
+
+            # Validate data
+            if score is None or questions_answered is None or time_left is None:
+                return jsonify({'error': 'Missing required fields'}), 400
+
+            # Create a new AlphaScore object
+            new_score = AlphaScore(
+                user_id=current_user.uid,
+                score=score,
+                questions_answered=questions_answered,
+                time_taken=60 - time_left
+            )
+
+            # Save to database
+            db.session.add(new_score)
+            db.session.commit()
+
+            return jsonify({'message': 'Score saved successfully'}), 200
+
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': f'An error occurred: {str(e)}'}), 500
 
     # API route to get personal Alphabet puzzle scores
     @public_bp.route('/api/alpha_scores/personal', methods=['GET'])
@@ -258,12 +308,6 @@ def register_routes(app, db, bcrypt):
             'total_pages': scores.pages,
             'current_page': scores.page
     })
-
-    # Alphabet scores page route
-    @public_bp.route('/alpha_scores')
-    @login_required # Only authenticated users can access this route
-    def alpha_scores():
-        return render_template('alpha_scores.html')
 
     # Custom error pages
 

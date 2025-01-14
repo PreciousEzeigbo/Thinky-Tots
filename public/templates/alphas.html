@@ -5,48 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alphabet Quiz - ThinkyTots</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/alphas.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/alphas.css') }}">
 </head>
-<body class="bg-gray-50">
+<body>
     <div class="container">
-        <h1>Alphabet Quiz</h1>
-        <div id="quiz-container" class="quiz-container">
-            <!-- Start Screen -->
-            <div id="start-screen">
+        <!-- Start Screen -->
+        <div id="start-screen" class="start-screen">
+            <div class="header">
+                <div class="title">Alphabet Quiz</div>
+            </div>
+
+            <div class="start-content">
                 <h2>Test your alphabet knowledge!</h2>
                 <p>You have 60 seconds to answer as many questions as possible.</p>
                 <div class="button-container">
-                    <button id="startButton" class="start-button">Start Quiz</button>
-                    <a href="{{ url_for('public.home') }}" class="exit-button">Exit</a>
+                    <button id="startButton" class="button button-green">Start Quiz</button>
+                    <a href="{{ url_for('public.home') }}" class="button button-red">Exit</a>
                 </div>
             </div>
 
-            <!-- Quiz Screen -->
-            <div id="quiz-screen" class="hidden">
-                <button id="exitQuizButton" class="exit-button">Exit</button>
-                <div class="timer" id="timer">60</div>
-                <div class="score">Score: <span id="score">0</span></div>
-                <div class="question" id="question"></div>
-                <div class="options" id="options"></div>
+            <div class="rules-container">
+                <h3>Rules</h3>
+                <ul>
+                    <li>Answer alphabet questions within 60 seconds</li>
+                    <li>Each correct answer earns 10 points</li>
+                    <li>Questions include next/previous letters, missing letters, and vowel/consonant identification</li>
+                    <li>Some questions may require multiple selections</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="quiz-screen hidden">
+            <div class="header">
+                <div class="title">Alphabet Quiz</div>
+                <div class="header-right">
+                    <span id="timer" class="timer">01:00</span>
+                    <button id="exitQuizButton" class="button button-red">Exit Quiz</button>
+                </div>
             </div>
 
-            <!-- Result Screen -->
-            <div id="result-screen" class="result-screen hidden">
-                <h2>Quiz Complete!</h2>
-                <p>Final Score: <span id="final-score">0</span></p>
-                <p>Time Taken: <span id="time-taken">0</span> seconds</p>
-                <div class="button-container">
-                    <button id="playAgainButton" class="start-button">Play Again</button>
-                    <a href="{{ url_for('public.home') }}" class="exit-button">Exit</a>
+            <div class="stats">
+                <div class="score">Score: <span id="score">0</span></div>
+            </div>
+
+            <div id="gameContent" class="game-content">
+                <div id="question" class="question-text"></div>
+                <div id="options" class="options-container">
+                    <!-- Options will display here -->
                 </div>
             </div>
         </div>
-    </div>
-    <script src="{{ url_for('static', filename='js/alphas.js') }}"></script>
 
-    <script>
-        const HOME_URL = "{{ url_for('public.home') }}";
-    </script>
+        <!-- Exit Confirmation Modal -->
+        <div id="exitConfirmModal" class="modal hidden">
+            <div class="modal-content">
+                <h3 class="modal-title">Exit Quiz?</h3>
+                <p class="modal-text">Are you sure you want to exit? Your progress will be lost.</p>
+                <div class="modal-buttons">
+                    <button id="cancelExit" class="button button-gray">Cancel</button>
+                    <button id="confirmExit" class="button button-red">Exit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="result-screen" class="game-over hidden">
+            <h2 class="game-over-title">Quiz Complete!</h2>
+            <p class="final-score">Final Score: <span id="final-score">0</span></p>
+            <p class="time-taken">Time Taken: <span id="time-taken">0</span> seconds</p>
+            <div class="game-over-buttons">
+                <button id="playAgainButton" class="button button-green">Play Again</button>
+                <a href="{{ url_for('public.home') }}" class="button button-red">Exit</a>
+            </div>
+        </div>
+    </div>
     <script src="{{ url_for('static', filename='js/alphas.js') }}"></script>
 </body>
 </html>

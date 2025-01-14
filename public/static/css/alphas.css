@@ -1,3 +1,4 @@
+/* Base styles and reset */
 * {
     margin: 0;
     padding: 0;
@@ -7,149 +8,102 @@
 body {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     background-color: #f9fafb;
+    color: #1f2937;
+    line-height: 1.5;
 }
 
 .container {
-    max-width: 800px;
+    max-width: 700px;
     margin: 0 auto;
     padding: 2rem;
     text-align: center;
 }
 
-h1 {
-    color: #1f2937;
+/* Header styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
 }
 
-.quiz-container {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-    margin-top: 2rem;
-    position: relative;
-}
-
-.timer {
+.title {
     font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #3b82f6;
-    font-family: monospace;
-}
-
-.score {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
+    font-weight: bold;
     color: #1f2937;
 }
 
-.question {
-    font-size: 1.5rem;
-    margin-bottom: 2rem;
-    color: #1f2937;
-}
-
-.options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+.header-right {
+    display: flex;
+    align-items: center;
     gap: 1rem;
-    margin-bottom: 2rem;
 }
 
-.option-button {
-    padding: 1rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 0.5rem;
-    background: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.option-button:hover:not(:disabled) {
-    border-color: #3b82f6;
-    color: #3b82f6;
-}
-
-.option-button:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.start-button, .exit-button {
-    padding: 1rem 2rem;
+/* Button styles */
+.button {
+    padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 0.5rem;
-    font-size: 1.2rem;
-    border-radius: 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
     text-decoration: none;
-    display: inline-block;
 }
 
-.start-button {
-    background-color: #3b82f6;
+.button-green {
+    background-color: #10b981;
     color: white;
 }
 
-.start-button:hover {
-    background-color: #2563eb;
+.button-green:hover {
+    background-color: #059669;
 }
 
-.exit-button {
+.button-red {
     background-color: #ef4444;
     color: white;
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
 }
 
-.exit-button:hover {
+.button-red:hover {
     background-color: #dc2626;
 }
 
-.correct {
-    background-color: #34d399;
+.button-gray {
+    background-color: #6b7280;
     color: white;
-    border-color: #34d399;
 }
 
-.incorrect {
-    background-color: #f87171;
-    color: white;
-    border-color: #f87171;
+.button-gray:hover {
+    background-color: #4b5563;
 }
 
-.selected {
-    background-color: #fde68a;
-    border-color: #f59e0b;
-    color: #000;
-}
-
-.result-screen {
-    text-align: center;
+/* Start screen styles */
+.start-screen {
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     padding: 2rem;
 }
 
-.result-screen h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #1f2937;
+.start-content {
+    margin: 2rem 0;
+    text-align: center;
 }
 
-.result-screen p {
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-    color: #4b5563;
+.start-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.start-content p {
+    margin-bottom: 2rem;
 }
 
 .button-container {
     display: flex;
     gap: 1rem;
     justify-content: center;
-    margin-top: 1rem;
+    margin-top: 2rem;
 }
 
 .submit-button {
@@ -168,6 +122,180 @@ h1 {
     background-color: #2563eb;
 }
 
+.rules-container {
+    text-align: left;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+}
+
+.rules-container h3 {
+    margin-bottom: 1rem;
+}
+
+.rules-container ul {
+    list-style-position: inside;
+    margin-left: 1rem;
+}
+
+.rules-container li {
+    margin-bottom: 0.5rem;
+}
+
+/* Quiz screen styles */
+.quiz-screen {
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.timer {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #3b82f6;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;;
+}
+
+.stats {
+    font-size: 1.2rem;
+}
+
+.game-content {
+    margin-top: 2rem;
+}
+
+.question-text {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.options-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.option-button {
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.option-button:hover:not(:disabled) {
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.option-button.selected {
+    background-color: #fde68a;
+    border-color: #f59e0b;
+    color: #000;
+}
+
+.option-button.correct {
+    background-color: #34d399;
+    color: white;
+    border-color: #34d399;
+}
+
+.option-button.incorrect {
+    background-color: #f87171;
+    color: white;
+    border-color: #f87171;
+}
+
+/* Exit Confirmation Modal styles */
+.modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    max-width: 24rem;
+    width: 100%;
+    margin: 0 1rem;
+}
+
+.modal-title {
+    font-size: 1.125rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.modal-text {
+    margin-bottom: 1rem;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* Game over screen styles */
+.game-over {
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    text-align: center;
+}
+
+.game-over-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+}
+
+.final-score, .time-taken {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #4b5563;
+}
+
+.game-over-buttons {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* Game Over Exit Button */
+.game-over-buttons .button-red {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    color: white;
+    background-color: #ef4444;
+    border: none;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.game-over-buttons .button-red:hover {
+    background-color: #dc2626;
+}
+
+
+/* Utility classes */
 .hidden {
     display: none !important;
 }
