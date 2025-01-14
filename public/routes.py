@@ -321,5 +321,6 @@ def register_routes(app, db, bcrypt):
     def server_error(e):
         return render_template("500.html"), 500
 
+
     # Register Blueprint with the public_bp
     app.register_blueprint(public_bp)
