@@ -96,7 +96,7 @@ nav ul li a:hover {
 }
 
 .cta-button:hover {
-    background-color: #45a049;
+    background-color: var(--bg-color);
 }
 
 /* Main content */
